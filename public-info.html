@@ -366,6 +366,28 @@
             grid-template-columns: 1fr;
             gap: 15px;
             flex-grow: 1;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Scrollbar styling for info-grid */
+        .info-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .info-grid::-webkit-scrollbar-track {
+            background: rgba(74, 111, 165, 0.1);
+            border-radius: 10px;
+        }
+        
+        .info-grid::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+        }
+        
+        .info-grid::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
         }
 
         .info-row {
@@ -448,6 +470,65 @@
             font-weight: 600;
             color: var(--dark);
             border: 1px solid rgba(74, 111, 165, 0.2);
+        }
+
+        /* Record Container Styling - SAME AS ADMIN */
+        .record-container {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(74, 111, 165, 0.15);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .record-container:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: rgba(74, 111, 165, 0.3);
+        }
+
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(74, 111, 165, 0.1);
+        }
+
+        .record-title {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .record-title i {
+            margin-right: 5px;
+        }
+
+        .record-timestamp {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .record-field {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .record-field-label {
+            font-weight: 600;
+            color: var(--dark);
+            min-width: 90px;
+            font-size: 0.9rem;
+        }
+
+        .record-field-value {
+            flex: 1;
+            color: var(--dark);
+            margin-left: 10px;
+            word-break: break-word;
         }
 
         /* Pagination Card */
@@ -670,6 +751,18 @@
             font-weight: 500;
         }
 
+        /* Subcollection Loading */
+        .subcollection-loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+            font-style: italic;
+        }
+
+        .subcollection-loading i {
+            margin-right: 10px;
+        }
+
         /* Error State */
         .error-state {
             text-align: center;
@@ -714,18 +807,6 @@
             font-size: 0.8rem;
             font-weight: bold;
             z-index: 1;
-        }
-
-        /* Subcollection Loading */
-        .subcollection-loading {
-            text-align: center;
-            padding: 20px;
-            color: var(--gray);
-            font-style: italic;
-        }
-
-        .subcollection-loading i {
-            margin-right: 10px;
         }
 
         /* Animations */
@@ -798,6 +879,19 @@
                 padding: 8px 14px;
                 min-width: 35px;
                 font-size: 0.9rem;
+            }
+            
+            .record-field {
+                flex-direction: column;
+            }
+            
+            .record-field-label {
+                min-width: auto;
+                margin-bottom: 3px;
+            }
+            
+            .record-field-value {
+                margin-left: 0;
             }
         }
 
@@ -946,6 +1040,11 @@
         let currentPage = 1;
         const itemsPerPage = 1;
         let selectedDate = null;
+        
+        // Store all subcollection data
+        let allChronologyData = [];
+        let allIPStatusData = [];
+        let allPEARData = [];
 
         // Check public access
         function checkPublicAccess() {
@@ -986,30 +1085,124 @@
             window.location.href = 'dashboard-public.html';
         }
 
-        // Format date as "DD Month YYYY"
-        function formatDateDisplay(date) {
-            return date.toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            }).replace(',', '');
+        // ===== IMPROVED TIMESTAMP FORMATTING FUNCTIONS =====
+        
+        // Format date with better error handling
+        function formatDateDisplay(timestamp) {
+            if (!timestamp) return 'N/A';
+            
+            try {
+                // Handle Firestore Timestamp
+                if (timestamp && typeof timestamp.toDate === 'function') {
+                    const date = timestamp.toDate();
+                    if (!isNaN(date.getTime())) {
+                        return date.toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                        });
+                    }
+                }
+                
+                // Handle Date object
+                if (timestamp instanceof Date && !isNaN(timestamp.getTime())) {
+                    return timestamp.toLocaleDateString('en-GB', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                }
+                
+                // Handle string date
+                if (typeof timestamp === 'string') {
+                    const date = new Date(timestamp);
+                    if (!isNaN(date.getTime())) {
+                        return date.toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                        });
+                    }
+                }
+                
+                // Handle number timestamp
+                if (typeof timestamp === 'number') {
+                    const date = new Date(timestamp);
+                    if (!isNaN(date.getTime())) {
+                        return date.toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                        });
+                    }
+                }
+            } catch (error) {
+                console.warn('Error formatting date:', error);
+            }
+            
+            return 'N/A';
         }
 
-        // Format time as "HH:MM" (24-hour format)
+        // Format time with better error handling
         function formatTimeDisplay(timestamp) {
             if (!timestamp) return 'N/A';
             
             try {
-                const date = timestamp.toDate();
-                return date.toLocaleTimeString('en-GB', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                });
+                // Handle Firestore Timestamp
+                if (timestamp && typeof timestamp.toDate === 'function') {
+                    const date = timestamp.toDate();
+                    if (!isNaN(date.getTime())) {
+                        return date.toLocaleTimeString('en-MY', { 
+                            hour: '2-digit', 
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                    }
+                }
+                
+                // Handle Date object
+                if (timestamp instanceof Date && !isNaN(timestamp.getTime())) {
+                    return timestamp.toLocaleTimeString('en-MY', { 
+                        hour: '2-digit', 
+                        minute: '2-digit',
+                        hour12: true
+                    });
+                }
+                
+                // Handle string date
+                if (typeof timestamp === 'string') {
+                    const date = new Date(timestamp);
+                    if (!isNaN(date.getTime())) {
+                        return date.toLocaleTimeString('en-MY', { 
+                            hour: '2-digit', 
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                    }
+                }
+                
+                // Handle number timestamp
+                if (typeof timestamp === 'number') {
+                    const date = new Date(timestamp);
+                    if (!isNaN(date.getTime())) {
+                        return date.toLocaleTimeString('en-MY', { 
+                            hour: '2-digit', 
+                            minute: '2-digit',
+                            hour12: true
+                        });
+                    }
+                }
             } catch (error) {
-                console.warn('Error formatting timestamp to time:', error);
-                return 'N/A';
+                console.warn('Error formatting time:', error);
             }
+            
+            return 'N/A';
+        }
+
+        // Get timestamp from record with fallback
+        function getRecordTimestamp(record) {
+            // Try different timestamp fields
+            return record.createdAt || record.timestamp || record.lastUpdated || null;
         }
 
         // Capitalize first letter
@@ -1137,8 +1330,8 @@
                 // Display current incident with loading placeholders for subcollections
                 await displayCurrentIncident();
 
-                // Load subcollections in background
-                loadSubcollections();
+                // Load ALL subcollections in background
+                await loadAllSubcollections();
 
                 // Create pagination
                 if (allIncidentsData.length > 1) {
@@ -1153,53 +1346,138 @@
             }
         }
 
-        // Load subcollections in background
-        async function loadSubcollections() {
+        // ===== IMPROVED SUBCOLLECTION LOADING FUNCTIONS =====
+        
+        // Load ALL chronology data for this incident
+        async function loadAllChronologyData(incidentId) {
             try {
-                console.log('Loading subcollections...');
-                
-                // Load all subcollections in parallel
-                const [chronologyData, ipStatusData, pearData] = await Promise.all([
-                    loadRelatedData('chronology', currentIncidentId),
-                    loadRelatedData('IPstatus', currentIncidentId),
-                    loadRelatedData('pear', currentIncidentId)
-                ]);
-                
-                console.log('Subcollections loaded:', {
-                    chronology: chronologyData.length,
-                    ipStatus: ipStatusData.length,
-                    pear: pearData.length
-                });
-                
-                // Update the display with actual data
-                updateSubcollectionDisplay(chronologyData, ipStatusData, pearData);
-                
-            } catch (error) {
-                console.error('Error loading subcollections:', error);
-                // Still update display with error message
-                updateSubcollectionDisplay([], [], []);
-            }
-        }
-
-        // Load related data from subcollection
-        async function loadRelatedData(collectionName, incidentId) {
-            try {
-                const subcollectionRef = db.collection('incidents').doc(incidentId).collection(collectionName);
-                const snapshot = await subcollectionRef
-                    .orderBy('timestamp', 'desc')
-                    .limit(1)
+                const snapshot = await db.collection('incidents').doc(incidentId)
+                    .collection('chronology')
+                    .orderBy('createdAt', 'asc')
                     .get();
                 
                 const data = [];
                 snapshot.forEach((doc) => {
-                    data.push({ id: doc.id, ...doc.data() });
+                    const record = doc.data();
+                    
+                    // Ensure we have a timestamp field
+                    if (!record.createdAt && record.timestamp) {
+                        record.createdAt = record.timestamp;
+                    }
+                    
+                    data.push({ id: doc.id, ...record });
                 });
+                
+                console.log(`Loaded ${data.length} chronology records`);
+                if (data.length > 0) {
+                    console.log('Sample chronology timestamp:', getRecordTimestamp(data[0]));
+                }
                 
                 return data;
                 
             } catch (error) {
-                console.error(`Error loading ${collectionName}:`, error);
+                console.error('Error loading all chronology data:', error);
                 return [];
+            }
+        }
+
+        // Load ALL IP status data for this incident
+        async function loadAllIPStatusData(incidentId) {
+            try {
+                const snapshot = await db.collection('incidents').doc(incidentId)
+                    .collection('IPstatus')
+                    .orderBy('timestamp', 'desc')
+                    .get();
+                
+                const data = [];
+                snapshot.forEach((doc) => {
+                    const record = doc.data();
+                    
+                    // Ensure we have a timestamp field
+                    if (!record.timestamp && record.createdAt) {
+                        record.timestamp = record.createdAt;
+                    }
+                    
+                    data.push({ id: doc.id, ...record });
+                });
+                
+                console.log(`Loaded ${data.length} IP status records`);
+                if (data.length > 0) {
+                    console.log('Sample IP status timestamp:', getRecordTimestamp(data[0]));
+                }
+                
+                return data;
+                
+            } catch (error) {
+                console.error('Error loading all IP status data:', error);
+                return [];
+            }
+        }
+
+        // Load ALL PEAR data for this incident
+        async function loadAllPEARData(incidentId) {
+            try {
+                const snapshot = await db.collection('incidents').doc(incidentId)
+                    .collection('pear')
+                    .orderBy('timestamp', 'desc')
+                    .get();
+                
+                const data = [];
+                snapshot.forEach((doc) => {
+                    const record = doc.data();
+                    
+                    // Ensure we have a timestamp field
+                    if (!record.timestamp && record.createdAt) {
+                        record.timestamp = record.createdAt;
+                    }
+                    
+                    data.push({ id: doc.id, ...record });
+                });
+                
+                console.log(`Loaded ${data.length} PEAR records`);
+                if (data.length > 0) {
+                    console.log('Sample PEAR timestamp:', getRecordTimestamp(data[0]));
+                }
+                
+                return data;
+                
+            } catch (error) {
+                console.error('Error loading all PEAR data:', error);
+                return [];
+            }
+        }
+
+        // Load ALL subcollections
+        async function loadAllSubcollections() {
+            try {
+                console.log('Loading ALL subcollections...');
+                
+                // Load all subcollections in parallel
+                const [chronologyData, ipStatusData, pearData] = await Promise.all([
+                    loadAllChronologyData(currentIncidentId),
+                    loadAllIPStatusData(currentIncidentId),
+                    loadAllPEARData(currentIncidentId)
+                ]);
+                
+                allChronologyData = chronologyData;
+                allIPStatusData = ipStatusData;
+                allPEARData = pearData;
+                
+                console.log('All subcollections loaded:', {
+                    chronology: allChronologyData.length,
+                    ipStatus: allIPStatusData.length,
+                    pear: allPEARData.length
+                });
+                
+                // Update the display with ALL data
+                updateSubcollectionDisplay();
+                
+            } catch (error) {
+                console.error('Error loading subcollections:', error);
+                allChronologyData = [];
+                allIPStatusData = [];
+                allPEARData = [];
+                updateSubcollectionDisplay();
             }
         }
 
@@ -1290,7 +1568,7 @@
                             </div>
                         </div>
                         
-                        <!-- BOX 2: CHRONOLOGY -->
+                        <!-- BOX 2: CHRONOLOGY - SHOW ALL RECORDS -->
                         <div class="info-box">
                             <div class="box-header">
                                 <h3 class="box-title">
@@ -1307,7 +1585,7 @@
                             </div>
                         </div>
                         
-                        <!-- BOX 3: IP STATUS -->
+                        <!-- BOX 3: IP STATUS - SHOW ALL RECORDS -->
                         <div class="info-box">
                             <div class="box-header">
                                 <h3 class="box-title">
@@ -1324,7 +1602,7 @@
                             </div>
                         </div>
                         
-                        <!-- BOX 4: PEAR -->
+                        <!-- BOX 4: PEAR - SHOW ALL RECORDS -->
                         <div class="info-box">
                             <div class="box-header">
                                 <h3 class="box-title">
@@ -1345,137 +1623,234 @@
             `;
         }
 
-        // Update subcollection display with actual data
-        function updateSubcollectionDisplay(chronologyData, ipStatusData, pearData) {
-            // Update Chronology
+        // ===== IMPROVED DISPLAY FUNCTIONS WITH TIMESTAMP =====
+        
+        // Update subcollection display with ALL data in separate containers
+        function updateSubcollectionDisplay() {
+            // Update Chronology - SHOW ALL RECORDS
             const chronologyContainer = document.getElementById('chronologyData');
             if (chronologyContainer) {
-                const latestChronology = chronologyData[0] || {};
-                chronologyContainer.innerHTML = chronologyData.length > 0 ? `
-                    <div class="info-row">
-                        <span class="info-label">Report By:</span>
-                        <span class="info-value ${latestChronology.name || latestChronology.reportBy ? '' : 'empty'}">
-                            ${latestChronology.name || latestChronology.reportBy || 'No data'}
-                        </span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Location:</span>
-                        <span class="info-value ${latestChronology.location ? '' : 'empty'}">
-                            ${latestChronology.location || 'No data'}
-                        </span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Incident Info:</span>
-                        <span class="info-value ${(latestChronology.infoIncident || latestChronology.info) ? '' : 'empty'}">
-                            ${latestChronology.infoIncident || latestChronology.info || 'No information'}
-                        </span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Time:</span>
-                        <span class="info-value ${latestChronology.timestamp ? '' : 'empty'}">
-                            ${latestChronology.timestamp ? formatTimeDisplay(latestChronology.timestamp.toDate()) : 'No data'}
-                        </span>
-                    </div>
-                ` : `
-                    <div class="info-row">
-                        <span class="info-label">Status:</span>
-                        <span class="info-value empty">
-                            No chronology data available
-                        </span>
-                    </div>
-                `;
+                if (allChronologyData.length === 0) {
+                    chronologyContainer.innerHTML = `
+                        <div class="record-container">
+                            <div class="record-field">
+                                <span class="record-field-label">No Records:</span>
+                                <span class="record-field-value empty">No chronology data available</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    let chronologyHTML = '';
+                    
+                    allChronologyData.forEach((record, index) => {
+                        // Get timestamp using helper function
+                        const timestamp = getRecordTimestamp(record);
+                        
+                        // Format timestamp if available
+                        let timestampStr = '';
+                        if (timestamp) {
+                            const dateStr = formatDateDisplay(timestamp);
+                            const timeStr = formatTimeDisplay(timestamp);
+                            if (dateStr !== 'N/A' && timeStr !== 'N/A') {
+                                timestampStr = `
+                                    <div class="record-timestamp">
+                                        <i class="fas fa-clock"></i> ${dateStr} • ${timeStr}
+                                    </div>
+                                `;
+                            }
+                        }
+                        
+                        chronologyHTML += `
+                            <div class="record-container">
+                                <div class="record-header">
+                                    <span class="record-title">
+                                        <i class="fas fa-flag"></i> Chronology #${index + 1}
+                                    </span>
+                                    ${timestampStr}
+                                </div>
+                                
+                                <div class="record-field">
+                                    <span class="record-field-label">Report By:</span>
+                                    <span class="record-field-value">${record.name || record.reportBy || 'N/A'}</span>
+                                </div>
+                                
+                                <div class="record-field">
+                                    <span class="record-field-label">Location:</span>
+                                    <span class="record-field-value">${record.location || 'N/A'}</span>
+                                </div>
+                                
+                                <div class="record-field">
+                                    <span class="record-field-label">Incident Info:</span>
+                                    <span class="record-field-value">${record.info || 'No details provided'}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    chronologyContainer.innerHTML = chronologyHTML;
+                }
             }
 
-            // Update IP Status
+            // Update IP Status - SHOW ALL RECORDS
             const ipStatusContainer = document.getElementById('ipStatusData');
             if (ipStatusContainer) {
-                const latestIPStatus = ipStatusData[0] || {};
-                ipStatusContainer.innerHTML = ipStatusData.length > 0 ? `
-                    <div class="info-row">
-                        <span class="info-label">Reported By:</span>
-                        <span class="info-value ${latestIPStatus.name || latestIPStatus.reportBy ? '' : 'empty'}">
-                            ${latestIPStatus.name || latestIPStatus.reportBy || 'No data'}
-                        </span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">IP ID:</span>
-                        <span class="info-value">
-                            ${latestIPStatus.IPid ? `<span class="ip-id-badge">${latestIPStatus.IPid}</span>` : '<span class="empty">No data</span>'}
-                        </span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">IP Status:</span>
-                        <span class="info-value">
-                            ${latestIPStatus.ipStatus ? `
-                                <span class="status-badge ${getStatusBadgeClass(latestIPStatus.ipStatus)}">
-                                    <i class="fas ${getStatusIcon(latestIPStatus.ipStatus)}"></i> ${capitalizeFirstLetter(latestIPStatus.ipStatus)}
-                                </span>
-                            ` : '<span class="empty">No data</span>'}
-                        </span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Location:</span>
-                        <span class="info-value ${latestIPStatus.location ? '' : 'empty'}">
-                            ${latestIPStatus.location || 'No data'}
-                        </span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Info Incident:</span>
-                        <span class="info-value ${(latestIPStatus.infoIncident || latestIPStatus.info) ? '' : 'empty'}">
-                            ${latestIPStatus.infoIncident || latestIPStatus.info || 'No information'}
-                        </span>
-                    </div>
-                ` : `
-                    <div class="info-row">
-                        <span class="info-label">Status:</span>
-                        <span class="info-value empty">
-                            No IP status data available
-                        </span>
-                    </div>
-                `;
+                if (allIPStatusData.length === 0) {
+                    ipStatusContainer.innerHTML = `
+                        <div class="record-container">
+                            <div class="record-field">
+                                <span class="record-field-label">No Records:</span>
+                                <span class="record-field-value empty">No IP status data available</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    let ipStatusHTML = '';
+                    
+                    allIPStatusData.forEach((record, index) => {
+                        // Get timestamp using helper function
+                        const timestamp = getRecordTimestamp(record);
+                        
+                        // Format timestamp if available
+                        let timestampStr = '';
+                        if (timestamp) {
+                            const dateStr = formatDateDisplay(timestamp);
+                            const timeStr = formatTimeDisplay(timestamp);
+                            if (dateStr !== 'N/A' && timeStr !== 'N/A') {
+                                timestampStr = `
+                                    <div class="record-timestamp">
+                                        <i class="fas fa-clock"></i> ${dateStr} • ${timeStr}
+                                    </div>
+                                `;
+                            }
+                        }
+                        
+                        const status = record.ipStatus || record.status || 'Unknown';
+                        const ipId = record.IPid || record.id || 'N/A';
+                        const reportedBy = record.name || record.reportBy || record.reportedBy || 'N/A';
+                        const location = record.location || 'Not specified';
+                        const info = record.infoIncident || record.info || 'No additional information';
+                        
+                        ipStatusHTML += `
+                            <div class="record-container">
+                                <div class="record-header">
+                                    <span class="record-title">
+                                        <i class="fas fa-shield-alt"></i> IP Status #${index + 1}
+                                    </span>
+                                    ${timestampStr}
+                                </div>
+                                
+                                <div class="record-field">
+                                    <span class="record-field-label">Reported By:</span>
+                                    <span class="record-field-value">${reportedBy}</span>
+                                </div>
+                                
+                                <div class="record-field">
+                                    <span class="record-field-label">IP ID:</span>
+                                    <span class="record-field-value">${ipId}</span>
+                                </div>
+                                
+                                <div class="record-field">
+                                    <span class="record-field-label">IP Status:</span>
+                                    <span class="record-field-value">
+                                        <span class="status-badge ${getStatusBadgeClass(status)}">
+                                            <i class="fas ${getStatusIcon(status)}"></i> ${capitalizeFirstLetter(status)}
+                                        </span>
+                                    </span>
+                                </div>
+                                
+                                <div class="record-field">
+                                    <span class="record-field-label">Location:</span>
+                                    <span class="record-field-value">${location}</span>
+                                </div>
+                                
+                                <div class="record-field">
+                                    <span class="record-field-label">Info Incident:</span>
+                                    <span class="record-field-value">${info}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    ipStatusContainer.innerHTML = ipStatusHTML;
+                }
             }
 
-            // Update PEAR
+            // Update PEAR - SHOW ALL RECORDS
             const pearContainer = document.getElementById('pearData');
             if (pearContainer) {
-                const latestPear = pearData[0] || {};
-                pearContainer.innerHTML = pearData.length > 0 ? `
-                    <div class="info-row">
-                        <span class="info-label">Reported By:</span>
-                        <span class="info-value ${latestPear.name || latestPear.reportBy ? '' : 'empty'}">
-                            ${latestPear.name || latestPear.reportBy || 'No data'}
-                        </span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Category:</span>
-                        <span class="info-value ${latestPear.category ? '' : 'empty'}">
-                            ${capitalizeFirstLetter(latestPear.category) || 'No data'}
-                        </span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Description:</span>
-                        <span class="info-value ${latestPear.description ? '' : 'empty'}">
-                            ${latestPear.description || 'No data'}
-                        </span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Status:</span>
-                        <span class="info-value">
-                            ${latestPear.status ? `
-                                <span class="status-badge ${getStatusBadgeClass(latestPear.status)}">
-                                    <i class="fas ${getStatusIcon(latestPear.status)}"></i> ${capitalizeFirstLetter(latestPear.status)}
-                                </span>
-                            ` : '<span class="empty">No data</span>'}
-                        </span>
-                    </div>
-                ` : `
-                    <div class="info-row">
-                        <span class="info-label">Status:</span>
-                        <span class="info-value empty">
-                            No PEAR data available
-                        </span>
-                    </div>
-                `;
+                if (allPEARData.length === 0) {
+                    pearContainer.innerHTML = `
+                        <div class="record-container">
+                            <div class="record-field">
+                                <span class="record-field-label">No Records:</span>
+                                <span class="record-field-value empty">No PEAR data available</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    let pearHTML = '';
+                    
+                    allPEARData.forEach((record, index) => {
+                        // Get timestamp using helper function
+                        const timestamp = getRecordTimestamp(record);
+                        
+                        // Format timestamp if available
+                        let timestampStr = '';
+                        if (timestamp) {
+                            const dateStr = formatDateDisplay(timestamp);
+                            const timeStr = formatTimeDisplay(timestamp);
+                            if (dateStr !== 'N/A' && timeStr !== 'N/A') {
+                                timestampStr = `
+                                    <div class="record-timestamp">
+                                        <i class="fas fa-clock"></i> ${dateStr} • ${timeStr}
+                                    </div>
+                                `;
+                            }
+                        }
+                        
+                        const reportedBy = record.name || record.reportBy || 'N/A';
+                        const category = record.category || 'General';
+                        const description = record.description || 'No description available';
+                        const status = record.status || 'Unknown';
+                        
+                        pearHTML += `
+                            <div class="record-container">
+                                <div class="record-header">
+                                    <span class="record-title">
+                                        <i class="fas fa-chart-bar"></i> PEAR #${index + 1} - ${capitalizeFirstLetter(category)}
+                                    </span>
+                                    ${timestampStr}
+                                </div>
+                                
+                                <div class="record-field">
+                                    <span class="record-field-label">Reported By:</span>
+                                    <span class="record-field-value">${reportedBy}</span>
+                                </div>
+                                
+                                <div class="record-field">
+                                    <span class="record-field-label">Category:</span>
+                                    <span class="record-field-value">${capitalizeFirstLetter(category)}</span>
+                                </div>
+                                
+                                <div class="record-field">
+                                    <span class="record-field-label">Description:</span>
+                                    <span class="record-field-value">${description}</span>
+                                </div>
+                                
+                                <div class="record-field">
+                                    <span class="record-field-label">Status:</span>
+                                    <span class="record-field-value">
+                                        <span class="status-badge ${getStatusBadgeClass(status)}">
+                                            <i class="fas ${getStatusIcon(status)}"></i> ${capitalizeFirstLetter(status)}
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    pearContainer.innerHTML = pearHTML;
+                }
             }
         }
 
@@ -1486,7 +1861,7 @@
             loadIncidentData(1);
         }
 
-        // View Chronology details - FIXED VERSION
+        // View Chronology details
         function viewChronology(incidentId) {
             console.log('🚀 viewChronology called for incident:', incidentId);
             
@@ -1537,7 +1912,7 @@
             }
         }
 
-        // View IP Status details - FIXED VERSION
+        // View IP Status details
         function viewIPStatus(incidentId) {
             console.log('🚀 viewIPStatus called for incident:', incidentId);
             
@@ -1588,7 +1963,7 @@
             }
         }
 
-        // View PEAR details - FIXED VERSION
+        // View PEAR details
         function viewPear(incidentId) {
             console.log('🚀 viewPear called for incident:', incidentId);
             
@@ -1765,13 +2140,6 @@
             }
             
             try {
-                // Load all data for PDF
-                const [chronologyData, ipStatusData, pearData] = await Promise.all([
-                    loadRelatedData('chronology', currentIncidentId),
-                    loadRelatedData('IPstatus', currentIncidentId),
-                    loadRelatedData('pear', currentIncidentId)
-                ]);
-                
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
                 
@@ -1837,27 +2205,29 @@
                 let finalY = doc.lastAutoTable.finalY + 15;
                 
                 // Add Chronology section if data exists
-                if (chronologyData.length > 0) {
+                if (allChronologyData.length > 0) {
                     doc.setFontSize(16);
                     doc.setTextColor(60, 60, 60);
                     doc.text('CHRONOLOGY', 20, finalY);
                     
                     finalY += 10;
                     
-                    const chronologyForPDF = chronologyData.map((item, index) => {
-                        const time = item.timestamp ? formatTimeDisplay(item.timestamp.toDate()) : 'N/A';
+                    const chronologyForPDF = allChronologyData.map((item, index) => {
+                        const timestamp = getRecordTimestamp(item);
+                        const time = timestamp ? formatTimeDisplay(timestamp) : 'N/A';
+                        const date = timestamp ? formatDateDisplay(timestamp) : 'N/A';
                         return [
                             index + 1,
-                            time,
+                            `${time}\n${date}`,
                             item.name || 'Report',
                             item.location || 'N/A',
-                            item.infoIncident || item.info || 'No details'
+                            item.info || 'No details'
                         ];
                     });
                     
                     doc.autoTable({
                         startY: finalY,
-                        head: [['No.', 'Time', 'Reported By', 'Location', 'Details']],
+                        head: [['No.', 'Time & Date', 'Reported By', 'Location', 'Details']],
                         body: chronologyForPDF,
                         theme: 'grid',
                         headStyles: {
@@ -1876,7 +2246,7 @@
                         },
                         columnStyles: {
                             0: { cellWidth: 15 },
-                            1: { cellWidth: 25 },
+                            1: { cellWidth: 35 },
                             2: { cellWidth: 30 },
                             3: { cellWidth: 35 },
                             4: { cellWidth: 55 }
@@ -1887,7 +2257,7 @@
                 }
                 
                 // Add IP Status section if data exists
-                if (ipStatusData.length > 0) {
+                if (allIPStatusData.length > 0) {
                     if (finalY > 250) {
                         doc.addPage();
                         finalY = 20;
@@ -1899,7 +2269,7 @@
                     
                     finalY += 10;
                     
-                    const ipStatusForPDF = ipStatusData.map((item, index) => {
+                    const ipStatusForPDF = allIPStatusData.map((item, index) => {
                         const ipId = item.IPid || item.id || `IP-${index + 1}`;
                         const location = item.location || 'Not specified';
                         const info = item.infoIncident || item.info || 'No additional information';
@@ -1939,7 +2309,7 @@
                 }
                 
                 // Add PEAR section if data exists
-                if (pearData.length > 0) {
+                if (allPEARData.length > 0) {
                     if (finalY > 230) {
                         doc.addPage();
                         finalY = 20;
@@ -1953,10 +2323,10 @@
                     
                     // Group PEAR data by category
                     const groupedPEAR = {
-                        people: pearData.filter(item => item.category === 'people'),
-                        environment: pearData.filter(item => item.category === 'environment'),
-                        asset: pearData.filter(item => item.category === 'asset'),
-                        reputation: pearData.filter(item => item.category === 'reputation')
+                        people: allPEARData.filter(item => item.category === 'people'),
+                        environment: allPEARData.filter(item => item.category === 'environment'),
+                        asset: allPEARData.filter(item => item.category === 'asset'),
+                        reputation: allPEARData.filter(item => item.category === 'reputation')
                     };
                     
                     // Create table for each category
