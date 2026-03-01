@@ -699,6 +699,28 @@
             grid-template-columns: 1fr;
             gap: 15px;
             flex-grow: 1;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Scrollbar styling for info-grid */
+        .info-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .info-grid::-webkit-scrollbar-track {
+            background: rgba(74, 111, 165, 0.1);
+            border-radius: 10px;
+        }
+        
+        .info-grid::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+        }
+        
+        .info-grid::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
         }
 
         .info-row {
@@ -735,6 +757,65 @@
         .info-value.empty {
             color: var(--gray);
             font-style: italic;
+        }
+
+        /* Record Container Styling */
+        .record-container {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(74, 111, 165, 0.15);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .record-container:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: rgba(74, 111, 165, 0.3);
+        }
+
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(74, 111, 165, 0.1);
+        }
+
+        .record-title {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.95rem;
+        }
+
+        .record-title i {
+            margin-right: 5px;
+        }
+
+        .record-timestamp {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .record-field {
+            display: flex;
+            margin-bottom: 8px;
+        }
+
+        .record-field-label {
+            font-weight: 600;
+            color: var(--dark);
+            min-width: 90px;
+            font-size: 0.9rem;
+        }
+
+        .record-field-value {
+            flex: 1;
+            color: var(--dark);
+            margin-left: 10px;
+            word-break: break-word;
         }
 
         /* Loading State */
@@ -1018,25 +1099,27 @@
         <!-- Incident Details Section (hidden initially) -->
         <div id="incidentDetails" class="incident-container" style="display: none;">
             <!-- Simplified Pagination in Header with Create Button -->
-            <div class="section-header">
-                <h2 class="section-title">
-                    <i class="fas fa-file-alt"></i> Incident Information
-                </h2>
-                <div class="header-pagination" id="headerPagination" style="display: none;">
-                    <button class="create-new-btn" onclick="showCreateIncidentModal()">
-                        <i class="fas fa-plus"></i> Create New
-                    </button>
-                    <button class="header-pagination-btn" id="headerPrevBtn" onclick="goToPreviousIncident()" disabled>
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <div class="header-page-number" id="headerPage1" onclick="goToIncidentByIndex(0)">1</div>
-                    <div class="header-page-number" id="headerPage2" onclick="goToIncidentByIndex(1)">2</div>
-                    <div class="header-page-number" id="headerPage3" onclick="goToIncidentByIndex(2)">3</div>
-                    <button class="header-pagination-btn" id="headerNextBtn" onclick="goToNextIncident()">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
+<div class="section-header">
+    <h2 class="section-title">
+        <i class="fas fa-file-alt"></i> Incident Information
+    </h2>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <button class="create-new-btn" onclick="showCreateIncidentModal()">
+            <i class="fas fa-plus"></i> Create New
+        </button>
+        <div class="header-pagination" id="headerPagination" style="display: none;">
+            <button class="header-pagination-btn" id="headerPrevBtn" onclick="goToPreviousIncident()" disabled>
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div class="header-page-number" id="headerPage1" onclick="goToIncidentByIndex(0)">1</div>
+            <div class="header-page-number" id="headerPage2" onclick="goToIncidentByIndex(1)">2</div>
+            <div class="header-page-number" id="headerPage3" onclick="goToIncidentByIndex(2)">3</div>
+            <button class="header-pagination-btn" id="headerNextBtn" onclick="goToNextIncident()">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
             
             <!-- Boxes Grid Layout -->
             <div class="boxes-grid">
@@ -1075,7 +1158,7 @@
                     </div>
                 </div>
                 
-                <!-- BOX 2: CHRONOLOGY -->
+                <!-- BOX 2: CHRONOLOGY - SHOW ALL RECORDS -->
                 <div class="info-box">
                     <div class="box-header">
                         <h3 class="box-title">
@@ -1092,7 +1175,7 @@
                     </div>
                 </div>
                 
-                <!-- BOX 3: IP STATUS -->
+                <!-- BOX 3: IP STATUS - SHOW ALL RECORDS -->
                 <div class="info-box">
                     <div class="box-header">
                         <h3 class="box-title">
@@ -1109,7 +1192,7 @@
                     </div>
                 </div>
                 
-                <!-- BOX 4: PEAR -->
+                <!-- BOX 4: PEAR - SHOW ALL RECORDS -->
                 <div class="info-box">
                     <div class="box-header">
                         <h3 class="box-title">
@@ -1717,170 +1800,229 @@
             document.getElementById('incidentLocation').textContent = currentIncidentData.location || 'Not specified';
             document.getElementById('incidentDescription').textContent = currentIncidentData.description || 'No description provided';
             
-            // Display additional sections
+            // Display additional sections with ALL records
             displayChronologySection();
             displayIPStatusSection();
             displayPEARSection();
         }
 
-        // Display Chronology Section
+        // Display Chronology Section - SHOW ALL RECORDS IN SEPARATE CONTAINERS
         function displayChronologySection() {
             const timelineContainer = document.getElementById('chronologyTimeline');
             
             if (chronologyData.length === 0) {
                 timelineContainer.innerHTML = `
-                    <div class="info-row">
-                        <span class="info-label">Report By:</span>
-                        <span class="info-value empty">No data</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Location:</span>
-                        <span class="info-value empty">No data</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Incident Info:</span>
-                        <span class="info-value empty">No information</span>
+                    <div class="record-container">
+                        <div class="record-field">
+                            <span class="record-field-label">No Records:</span>
+                            <span class="record-field-value empty">No chronology data available for this incident</span>
+                        </div>
                     </div>
                 `;
                 return;
             }
             
-            // Get the latest chronology record
-            const latestChronology = chronologyData[chronologyData.length - 1];
+            let timelineHTML = '';
             
-            let timelineHTML = `
-                <div class="info-row">
-                    <span class="info-label">Report By:</span>
-                    <span class="info-value">${latestChronology.name || latestChronology.reportBy || 'N/A'}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Location:</span>
-                    <span class="info-value">${latestChronology.location || 'N/A'}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Incident Info:</span>
-                    <span class="info-value">${latestChronology.info || 'No details provided'}</span>
-                </div>
-            `;
+            // Loop through ALL chronology records (chronologyData is sorted asc by createdAt)
+            chronologyData.forEach((record, index) => {
+                // Format timestamp if available
+                let timestampStr = '';
+                if (record.createdAt) {
+                    try {
+                        const date = record.createdAt.toDate();
+                        timestampStr = `
+                            <div class="record-timestamp">
+                                <i class="fas fa-clock"></i> ${formatDateDisplay(date)} • ${formatTimeDisplay(date)}
+                            </div>
+                        `;
+                    } catch (e) {
+                        console.warn('Error formatting timestamp:', e);
+                    }
+                }
+                
+                timelineHTML += `
+                    <div class="record-container">
+                        <div class="record-header">
+                            <span class="record-title">
+                                <i class="fas fa-flag"></i> Chronology #${index + 1}
+                            </span>
+                            ${timestampStr}
+                        </div>
+                        
+                        <div class="record-field">
+                            <span class="record-field-label">Report By:</span>
+                            <span class="record-field-value">${record.name || record.reportBy || 'N/A'}</span>
+                        </div>
+                        
+                        <div class="record-field">
+                            <span class="record-field-label">Location:</span>
+                            <span class="record-field-value">${record.location || 'N/A'}</span>
+                        </div>
+                        
+                        <div class="record-field">
+                            <span class="record-field-label">Incident Info:</span>
+                            <span class="record-field-value">${record.info || 'No details provided'}</span>
+                        </div>
+                    </div>
+                `;
+            });
             
             timelineContainer.innerHTML = timelineHTML;
         }
 
-        // Display IP Status Section
+        // Display IP Status Section - SHOW ALL RECORDS IN SEPARATE CONTAINERS
         function displayIPStatusSection() {
             const statusContainer = document.getElementById('ipStatusList');
             
             if (ipStatusData.length === 0) {
                 statusContainer.innerHTML = `
-                    <div class="info-row">
-                        <span class="info-label">Reported By:</span>
-                        <span class="info-value empty">No data</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">IP ID:</span>
-                        <span class="info-value empty">No data</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">IP Status:</span>
-                        <span class="info-value empty">No data</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Location:</span>
-                        <span class="info-value empty">No data</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Info Incident:</span>
-                        <span class="info-value empty">No information</span>
+                    <div class="record-container">
+                        <div class="record-field">
+                            <span class="record-field-label">No Records:</span>
+                            <span class="record-field-value empty">No IP status data available for this incident</span>
+                        </div>
                     </div>
                 `;
                 return;
             }
             
-            // Get the latest IP status record
-            const latestIPStatus = ipStatusData[0];
-            const status = latestIPStatus.ipStatus || latestIPStatus.status || 'Unknown';
-            const ipId = latestIPStatus.IPid || latestIPStatus.id || 'N/A';
-            const reportedBy = latestIPStatus.name || latestIPStatus.reportBy || latestIPStatus.reportedBy || 'N/A';
-            const location = latestIPStatus.location || 'Not specified';
-            const info = latestIPStatus.infoIncident || latestIPStatus.info || 'No additional information';
+            let statusHTML = '';
             
-            let statusHTML = `
-                <div class="info-row">
-                    <span class="info-label">Reported By:</span>
-                    <span class="info-value">${reportedBy}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">IP ID:</span>
-                    <span class="info-value">${ipId}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">IP Status:</span>
-                    <span class="info-value">${capitalizeFirstLetter(status)}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Location:</span>
-                    <span class="info-value">${location}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Info Incident:</span>
-                    <span class="info-value">${info}</span>
-                </div>
-            `;
+            // Loop through ALL IP status records
+            ipStatusData.forEach((record, index) => {
+                // Format timestamp if available
+                let timestampStr = '';
+                if (record.timestamp) {
+                    try {
+                        const date = record.timestamp.toDate();
+                        timestampStr = `
+                            <div class="record-timestamp">
+                                <i class="fas fa-clock"></i> ${formatDateDisplay(date)} • ${formatTimeDisplay(date)}
+                            </div>
+                        `;
+                    } catch (e) {
+                        console.warn('Error formatting timestamp:', e);
+                    }
+                }
+                
+                const status = record.ipStatus || record.status || 'Unknown';
+                const ipId = record.IPid || record.id || 'N/A';
+                const reportedBy = record.name || record.reportBy || record.reportedBy || 'N/A';
+                const location = record.location || 'Not specified';
+                const info = record.infoIncident || record.info || 'No additional information';
+                
+                statusHTML += `
+                    <div class="record-container">
+                        <div class="record-header">
+                            <span class="record-title">
+                                <i class="fas fa-shield-alt"></i> IP Status #${index + 1}
+                            </span>
+                            ${timestampStr}
+                        </div>
+                        
+                        <div class="record-field">
+                            <span class="record-field-label">Reported By:</span>
+                            <span class="record-field-value">${reportedBy}</span>
+                        </div>
+                        
+                        <div class="record-field">
+                            <span class="record-field-label">IP ID:</span>
+                            <span class="record-field-value">${ipId}</span>
+                        </div>
+                        
+                        <div class="record-field">
+                            <span class="record-field-label">IP Status:</span>
+                            <span class="record-field-value">${capitalizeFirstLetter(status)}</span>
+                        </div>
+                        
+                        <div class="record-field">
+                            <span class="record-field-label">Location:</span>
+                            <span class="record-field-value">${location}</span>
+                        </div>
+                        
+                        <div class="record-field">
+                            <span class="record-field-label">Info Incident:</span>
+                            <span class="record-field-value">${info}</span>
+                        </div>
+                    </div>
+                `;
+            });
             
             statusContainer.innerHTML = statusHTML;
         }
 
-        // Display PEAR Section
+        // Display PEAR Section - SHOW ALL RECORDS IN SEPARATE CONTAINERS
         function displayPEARSection() {
             const pearContainer = document.getElementById('pearDetails');
             
             if (pearData.length === 0) {
                 pearContainer.innerHTML = `
-                    <div class="info-row">
-                        <span class="info-label">Reported By:</span>
-                        <span class="info-value empty">No data</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Category:</span>
-                        <span class="info-value empty">No data</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Description:</span>
-                        <span class="info-value empty">No data</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Status:</span>
-                        <span class="info-value empty">No data</span>
+                    <div class="record-container">
+                        <div class="record-field">
+                            <span class="record-field-label">No Records:</span>
+                            <span class="record-field-value empty">No PEAR data available for this incident</span>
+                        </div>
                     </div>
                 `;
                 return;
             }
             
-            // Get the latest PEAR record
-            const latestPear = pearData[0];
-            const reportedBy = latestPear.name || latestPear.reportBy || 'N/A';
-            const category = latestPear.category || 'General';
-            const description = latestPear.description || 'No description available';
-            const status = latestPear.status || 'Unknown';
+            let pearHTML = '';
             
-            let pearHTML = `
-                <div class="info-row">
-                    <span class="info-label">Reported By:</span>
-                    <span class="info-value">${reportedBy}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Category:</span>
-                    <span class="info-value">${capitalizeFirstLetter(category)}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Description:</span>
-                    <span class="info-value">${description}</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">Status:</span>
-                    <span class="info-value">${capitalizeFirstLetter(status)}</span>
-                </div>
-            `;
+            // Loop through ALL PEAR records
+            pearData.forEach((record, index) => {
+                // Format timestamp if available
+                let timestampStr = '';
+                if (record.timestamp) {
+                    try {
+                        const date = record.timestamp.toDate();
+                        timestampStr = `
+                            <div class="record-timestamp">
+                                <i class="fas fa-clock"></i> ${formatDateDisplay(date)} • ${formatTimeDisplay(date)}
+                            </div>
+                        `;
+                    } catch (e) {
+                        console.warn('Error formatting timestamp:', e);
+                    }
+                }
+                
+                const reportedBy = record.name || record.reportBy || 'N/A';
+                const category = record.category || 'General';
+                const description = record.description || 'No description available';
+                const status = record.status || 'Unknown';
+                
+                pearHTML += `
+                    <div class="record-container">
+                        <div class="record-header">
+                            <span class="record-title">
+                                <i class="fas fa-chart-bar"></i> PEAR #${index + 1} - ${capitalizeFirstLetter(category)}
+                            </span>
+                            ${timestampStr}
+                        </div>
+                        
+                        <div class="record-field">
+                            <span class="record-field-label">Reported By:</span>
+                            <span class="record-field-value">${reportedBy}</span>
+                        </div>
+                        
+                        <div class="record-field">
+                            <span class="record-field-label">Category:</span>
+                            <span class="record-field-value">${capitalizeFirstLetter(category)}</span>
+                        </div>
+                        
+                        <div class="record-field">
+                            <span class="record-field-label">Description:</span>
+                            <span class="record-field-value">${description}</span>
+                        </div>
+                        
+                        <div class="record-field">
+                            <span class="record-field-label">Status:</span>
+                            <span class="record-field-value">${capitalizeFirstLetter(status)}</span>
+                        </div>
+                    </div>
+                `;
+            });
             
             pearContainer.innerHTML = pearHTML;
         }
@@ -2297,4 +2439,3 @@
     </script>
 </body>
 </html>
-
