@@ -19,6 +19,11 @@
             --light-gray: #e9ecef;
             --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             --hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            
+            /* Status colors - UPDATED */
+            --status-plan: #0d6efd;        /* Biru */
+            --status-ongoing: #ffc107;      /* Kuning */
+            --status-completed: #198754;    /* Hijau */
         }
 
         * {
@@ -649,6 +654,7 @@
             color: var(--dark);
         }
 
+        /* Status badges with updated colors */
         .status-badge {
             display: inline-block;
             padding: 6px 12px;
@@ -657,21 +663,20 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-        }
-
-        .status-plan {
-            background-color: #ffd166;
-            color: #7a5e00;
-        }
-
-        .status-ongoing {
-            background-color: #118ab2;
             color: white;
         }
 
+        .status-plan {
+            background-color: var(--status-plan);  /* Biru */
+        }
+
+        .status-ongoing {
+            background-color: var(--status-ongoing);  /* Kuning */
+            color: #212529;  /* Dark text for better contrast on yellow */
+        }
+
         .status-completed {
-            background-color: #06d6a0;
-            color: #004d3c;
+            background-color: var(--status-completed);  /* Hijau */
         }
 
         .actions {
@@ -987,6 +992,18 @@
                 height: 32px;
             }
         }
+
+        /* Old data badge */
+        .old-data-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff9800, #ff5722);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 5px;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -1061,11 +1078,6 @@
                 
                 <form id="pearForm">
                     <div class="form-group">
-                        <label class="form-label">Reported By</label>
-                        <input type="text" id="name" class="form-control" readonly>
-                    </div>
-                    
-                    <div class="form-group">
                         <label for="category" class="form-label">Category</label>
                         <select id="category" class="form-control" required>
                             <option value="">Select a category</option>
@@ -1121,7 +1133,6 @@
                         <thead>
                             <tr>
                                 <th data-sort="timestamp">Last Updated</th>
-                                <th data-sort="name">Reported By</th>
                                 <th data-sort="description">Description</th>
                                 <th data-sort="status">Status</th>
                                 <th>Actions</th>
@@ -1129,7 +1140,7 @@
                         </thead>
                         <tbody id="peopleTableBody">
                             <tr>
-                                <td colspan="5" class="loading">
+                                <td colspan="4" class="loading">
                                     <i class="fas fa-spinner fa-spin"></i> Loading people entries...
                                 </td>
                             </tr>
@@ -1162,7 +1173,6 @@
                         <thead>
                             <tr>
                                 <th data-sort="timestamp">Last Updated</th>
-                                <th data-sort="name">Reported By</th>
                                 <th data-sort="description">Description</th>
                                 <th data-sort="status">Status</th>
                                 <th>Actions</th>
@@ -1170,7 +1180,7 @@
                         </thead>
                         <tbody id="environmentTableBody">
                             <tr>
-                                <td colspan="5" class="loading">
+                                <td colspan="4" class="loading">
                                     <i class="fas fa-spinner fa-spin"></i> Loading environment entries...
                                 </td>
                             </tr>
@@ -1203,7 +1213,6 @@
                         <thead>
                             <tr>
                                 <th data-sort="timestamp">Last Updated</th>
-                                <th data-sort="name">Reported By</th>
                                 <th data-sort="description">Description</th>
                                 <th data-sort="status">Status</th>
                                 <th>Actions</th>
@@ -1211,7 +1220,7 @@
                         </thead>
                         <tbody id="assetTableBody">
                             <tr>
-                                <td colspan="5" class="loading">
+                                <td colspan="4" class="loading">
                                     <i class="fas fa-spinner fa-spin"></i> Loading asset entries...
                                 </td>
                             </tr>
@@ -1244,7 +1253,6 @@
                         <thead>
                             <tr>
                                 <th data-sort="timestamp">Last Updated</th>
-                                <th data-sort="name">Reported By</th>
                                 <th data-sort="description">Description</th>
                                 <th data-sort="status">Status</th>
                                 <th>Actions</th>
@@ -1252,7 +1260,7 @@
                         </thead>
                         <tbody id="reputationTableBody">
                             <tr>
-                                <td colspan="5" class="loading">
+                                <td colspan="4" class="loading">
                                     <i class="fas fa-spinner fa-spin"></i> Loading reputation entries...
                                 </td>
                             </tr>
@@ -1364,9 +1372,6 @@
                 // User is admin/staff, show admin content
                 displayUserProfile(currentUser);
                 
-                // Auto-fill form fields
-                document.getElementById('name').value = currentUser.name || currentUser.username || '';
-                
                 // Clear public chronology filters
                 localStorage.removeItem('selectedDate');
                 localStorage.removeItem('selectedIncidentId');
@@ -1467,7 +1472,7 @@
                             }
                         `;
                         
-                        // Enable form AUTO
+                        // Enable form
                         document.querySelectorAll('#pearForm input, #pearForm select, #pearForm textarea, #pearForm button').forEach(el => {
                             el.disabled = false;
                         });
@@ -1564,7 +1569,7 @@
                 allTables.forEach(table => {
                     table.innerHTML = `
                         <tr>
-                            <td colspan="5" class="no-data">
+                            <td colspan="4" class="no-data">
                                 <i class="fas fa-inbox"></i><br>
                                 Please select an incident first.
                             </td>
@@ -1580,7 +1585,7 @@
                 if (table.querySelector('.loading') || table.querySelector('.no-data') || table.querySelector('.error-state')) {
                     table.innerHTML = `
                         <tr>
-                            <td colspan="5" class="loading">
+                            <td colspan="4" class="loading">
                                 <i class="fas fa-spinner fa-spin"></i> Loading PEAR entries for selected incident...
                             </td>
                         </tr>
@@ -1649,7 +1654,7 @@
                 allTables.forEach(table => {
                     table.innerHTML = `
                         <tr>
-                            <td colspan="5" class="error-state">
+                            <td colspan="4" class="error-state">
                                 <i class="fas fa-exclamation-triangle"></i><br>
                                 Error loading PEAR entries.
                                 <br><small>${error.message}</small>
@@ -1681,7 +1686,7 @@
             if (entries.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="no-data">
+                        <td colspan="4" class="no-data">
                             <i class="fas fa-inbox"></i><br>
                             No ${category} entries found for this incident.
                         </td>
@@ -1696,9 +1701,7 @@
             if (searchInput && searchInput.value) {
                 const searchTerm = searchInput.value.toLowerCase();
                 filteredEntries = entries.filter(entry => 
-                    (entry.description && entry.description.toLowerCase().includes(searchTerm)) ||
-                    (entry.name && entry.name.toLowerCase().includes(searchTerm)) ||
-                    (entry.reportBy && entry.reportBy.toLowerCase().includes(searchTerm))
+                    (entry.description && entry.description.toLowerCase().includes(searchTerm))
                 );
             }
             
@@ -1795,7 +1798,6 @@
                         <div class="timestamp time">${timeStr}</div>
                         ${isOldData ? '<div class="old-data-badge"><i class="fas fa-history"></i> Old System Data</div>' : ''}
                     </td>
-                    <td class="name">${entry.name || entry.reportBy || 'Unknown Reporter'}</td>
                     <td class="description">${entry.description || 'No description provided'}</td>
                     <td><span class="status-badge ${statusClass}">${entry.status || 'Unknown'}</span></td>
                     <td class="actions">
@@ -1810,25 +1812,6 @@
                 
                 tableBody.appendChild(row);
             });
-            
-            // Add CSS for old data badge if needed
-            if (!document.querySelector('style[data-old-badge]')) {
-                const style = document.createElement('style');
-                style.setAttribute('data-old-badge', 'true');
-                style.textContent = `
-                    .old-data-badge {
-                        display: inline-block;
-                        background: linear-gradient(135deg, #ff9800, #ff5722);
-                        color: white;
-                        font-size: 0.7rem;
-                        padding: 2px 8px;
-                        border-radius: 10px;
-                        margin-top: 5px;
-                        font-weight: 500;
-                    }
-                `;
-                document.head.appendChild(style);
-            }
         }
 
         // Helper function to capitalize first letter
@@ -1848,7 +1831,6 @@
             const category = document.getElementById('category').value;
             const description = document.getElementById('description').value.trim();
             const status = document.getElementById('status').value;
-            const reportBy = document.getElementById('name').value.trim();
             
             // Simple validation
             if (!category) {
@@ -1877,8 +1859,6 @@
                         category: category,
                         description: description,
                         status: status,
-                        name: reportBy,
-                        reportBy: reportBy,
                         userRole: currentUser.emtRole || currentUser.position,
                         userPosition: currentUser.position,
                         submittedBy: currentUser.userId || 'unknown',
@@ -1891,7 +1871,6 @@
                 
                 // AUTO CLEAR FORM SETELAH SUBMIT
                 pearForm.reset();
-                document.getElementById('name').value = currentUser.name || currentUser.username;
                 
                 // Real-time listener akan auto-update table
                 // Tidak perlu manual loadPearEntries() lagi
