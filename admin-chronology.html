@@ -8,6 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <style>
+        /* ====== your existing styles (keep them exactly as they were) ====== */
         :root {
             --primary: #4a6fa5;
             --secondary: #6c9bcf;
@@ -19,6 +20,7 @@
             --light-gray: #e9ecef;
             --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             --hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --ongoing: #f39c12;
         }
 
         * {
@@ -340,6 +342,17 @@
             resize: vertical;
         }
 
+        select.form-control {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234a6fa5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            padding-right: 45px;
+        }
+
         .submit-btn {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
@@ -398,6 +411,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .table-title {
@@ -421,6 +436,7 @@
             display: flex;
             gap: 20px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .search-box {
@@ -454,7 +470,7 @@
             color: var(--primary);
         }
 
-        .sort-select {
+        .sort-select, .pear-filter-select {
             padding: 12px 20px;
             border: 2px solid var(--light-gray);
             border-radius: 25px;
@@ -464,13 +480,94 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             background-clip: padding-box;
+            min-width: 160px;
         }
 
-        .sort-select:focus {
+        .sort-select:focus, .pear-filter-select:focus {
             border-color: var(--primary);
             outline: none;
             box-shadow: 0 6px 20px rgba(74, 111, 165, 0.2);
             transform: translateY(-2px);
+        }
+
+        /* PEAR checkbox group */
+        .pear-checkbox-group {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin: 15px 0 5px;
+            padding: 15px;
+            background: rgba(74, 111, 165, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(74, 111, 165, 0.2);
+        }
+
+        .pear-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .pear-checkbox-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .pear-checkbox-item span {
+            color: var(--dark);
+        }
+
+        .pear-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 5px;
+            margin-bottom: 3px;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .badge-people { background: #e67e22; }
+        .badge-environment { background: #27ae60; }
+        .badge-asset { background: #3498db; }
+        .badge-reputation { background: #9b59b6; }
+
+        /* Status Circle untuk Ongoing */
+        .status-circle {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+
+        .status-ongoing {
+            background-color: var(--ongoing);
+            box-shadow: 0 0 8px var(--ongoing);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.7;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
         /* Table Styles */
@@ -487,7 +584,7 @@
         .chronology-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1000px;
+            min-width: 1000px; /* reduced from 1200px since we removed a column */
         }
 
         .chronology-table th {
@@ -544,21 +641,12 @@
             background: linear-gradient(135deg, rgba(74, 111, 165, 0.08), rgba(108, 155, 207, 0.08));
         }
 
-        /* HIGHLIGHT ROW - SAMA SEPERTI PUBLIC CHRONOLOGY */
         .chronology-table tr.highlighted {
             background: rgba(255, 243, 205, 0.7) !important;
             border-left: 4px solid #f39c12;
         }
 
         .chronology-table tr.highlighted:hover {
-            background: rgba(255, 243, 205, 0.9) !important;
-        }
-
-        .chronology-table tr.highlighted:nth-child(even) {
-            background: rgba(255, 243, 205, 0.7) !important;
-        }
-
-        .chronology-table tr.highlighted:nth-child(even):hover {
             background: rgba(255, 243, 205, 0.9) !important;
         }
 
@@ -579,12 +667,6 @@
             opacity: 0.8;
         }
 
-        .name {
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 1.05rem;
-        }
-
         .info {
             max-width: 400px;
             word-wrap: break-word;
@@ -592,11 +674,17 @@
             color: var(--dark);
         }
 
-        .location {
-            max-width: 200px;
-            word-wrap: break-word;
-            color: var(--primary);
-            font-weight: 500;
+        .pic-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(74, 111, 165, 0.3);
         }
 
         .actions {
@@ -679,7 +767,6 @@
             border: 1px solid rgba(231, 76, 60, 0.3);
         }
 
-        /* Old Data Indicator */
         .old-data-badge {
             display: inline-block;
             background: linear-gradient(135deg, #ff9800, #ff5722);
@@ -801,7 +888,6 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        /* Compatibility improvements */
         @supports not (background-clip: text) {
             .nav-brand {
                 background: transparent;
@@ -814,7 +900,6 @@
             }
         }
 
-        /* Responsive Design */
         @media (max-width: 1024px) {
             .main-content {
                 padding: 30px 20px;
@@ -905,7 +990,8 @@
             }
 
             .search-box input,
-            .sort-select {
+            .sort-select,
+            .pear-filter-select {
                 padding: 10px 15px 10px 40px;
                 font-size: 0.9rem;
             }
@@ -985,23 +1071,55 @@
             </h2>
             
             <form id="chronologyForm">
-                <div class="form-group">
-                    <label class="form-label">Report By</label>
-                    <input type="text" id="name" class="form-control" readonly>
-                </div>
+                <!-- Field Report By dihapus, nama diambil dari user login -->
                 
                 <div class="form-group">
-                    <label for="location" class="form-label">Location</label>
-                    <input type="text" id="location" class="form-control" placeholder="Enter incident location" required>
+                    <label for="pic" class="form-label">PIC</label>
+                    <select id="pic" class="form-control" required>
+                        <option value="">-- Select the PIC --</option>
+                        <option value="swc">SWC</option>
+                        <option value="wc">WC</option>
+                        <option value="fc">FC</option>
+                        <option value="cc">CC</option>
+                        <option value="ff">FF</option>
+                        <option value="planning">Planning</option>
+                        <option value="logistic">Logistic</option>
+                        <option value="operationchief">Operation Chief</option>
+                        <option value="pic6">PIC 6</option>
+                        <option value="pic7">PIC 7</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
                     <label for="info" class="form-label">Incident Information</label>
                     <textarea id="info" class="form-control" placeholder="Provide detailed information about the incident..." required></textarea>
                 </div>
+
+                <!-- PEAR CHECKBOXES (tidak wajib) -->
+                <div class="form-group">
+                    <label class="form-label">PEAR Categories (optional)</label>
+                    <div class="pear-checkbox-group">
+                        <label class="pear-checkbox-item">
+                            <input type="checkbox" id="pearPeople" value="people">
+                            <span>👥 People</span>
+                        </label>
+                        <label class="pear-checkbox-item">
+                            <input type="checkbox" id="pearEnvironment" value="environment">
+                            <span>🌿 Environment</span>
+                        </label>
+                        <label class="pear-checkbox-item">
+                            <input type="checkbox" id="pearAsset" value="asset">
+                            <span>📦 Asset</span>
+                        </label>
+                        <label class="pear-checkbox-item">
+                            <input type="checkbox" id="pearReputation" value="reputation">
+                            <span>⭐ Reputation</span>
+                        </label>
+                    </div>
+                </div>
                 
                 <button type="submit" class="submit-btn" id="submitBtn">
-                    <i class="fas fa-paper-plane"></i> Submit Report
+                    <i class="fas fa-paper-plane"></i> Submit
                 </button>
             </form>
         </div>
@@ -1017,11 +1135,18 @@
                         <i class="fas fa-search search-icon"></i>
                         <input type="text" id="searchInput" placeholder="Search reports...">
                     </div>
+                    <!-- PEAR Filter Dropdown -->
+                    <select class="pear-filter-select" id="pearFilter">
+                        <option value="all">All Categories</option>
+                        <option value="people">People only</option>
+                        <option value="environment">Environment only</option>
+                        <option value="asset">Asset only</option>
+                        <option value="reputation">Reputation only</option>
+                    </select>
                     <select class="sort-select" id="sortSelect">
                         <option value="newest">Newest First</option>
                         <option value="oldest">Oldest First</option>
-                        <option value="name">By Name</option>
-                        <option value="location">By Location</option>
+                        <option value="pic">By PIC</option>
                     </select>
                 </div>
             </div>
@@ -1031,9 +1156,9 @@
                     <thead>
                         <tr>
                             <th data-sort="timestamp">Last Updated</th>
-                            <th data-sort="name">Reported By</th>
                             <th data-sort="info">Information</th>
-                            <th data-sort="location">Location</th>
+                            <th>PEAR Categories</th>
+                            <th data-sort="pic">PIC</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -1049,7 +1174,7 @@
         </div>
     </div>
 
-    <!-- Edit Modal -->
+    <!-- Edit Modal (updated with PEAR checkboxes) -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1060,12 +1185,46 @@
                 <input type="hidden" id="editRecordId">
                 <input type="hidden" id="editSource">
                 <div class="form-group">
-                    <label for="editLocation" class="form-label">Location</label>
-                    <input type="text" id="editLocation" class="form-control" required>
+                    <label for="editPic" class="form-label">PIC</label>
+                    <select id="editPic" class="form-control" required>
+                        <option value="">-- Select PIC --</option>
+                        <option value="swc">SWC</option>
+                        <option value="wc">WC</option>
+                        <option value="ff">FF</option>
+                        <option value="pic1">PIC 1</option>
+                        <option value="pic2">PIC 2</option>
+                        <option value="pic3">PIC 3</option>
+                        <option value="pic4">PIC 4</option>
+                        <option value="pic5">PIC 5</option>
+                        <option value="pic6">PIC 6</option>
+                        <option value="pic7">PIC 7</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="editInfo" class="form-label">Incident Information</label>
                     <textarea id="editInfo" class="form-control" rows="3" required></textarea>
+                </div>
+                <!-- PEAR checkboxes in edit modal (optional) -->
+                <div class="form-group">
+                    <label class="form-label">PEAR Categories (optional)</label>
+                    <div class="pear-checkbox-group">
+                        <label class="pear-checkbox-item">
+                            <input type="checkbox" id="editPearPeople" value="people">
+                            <span>👥 People</span>
+                        </label>
+                        <label class="pear-checkbox-item">
+                            <input type="checkbox" id="editPearEnvironment" value="environment">
+                            <span>🌿 Environment</span>
+                        </label>
+                        <label class="pear-checkbox-item">
+                            <input type="checkbox" id="editPearAsset" value="asset">
+                            <span>📦 Asset</span>
+                        </label>
+                        <label class="pear-checkbox-item">
+                            <input type="checkbox" id="editPearReputation" value="reputation">
+                            <span>⭐ Reputation</span>
+                        </label>
+                    </div>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="cancel-btn" onclick="closeEditModal()">Cancel</button>
@@ -1102,6 +1261,7 @@
         const reportsTableBody = document.getElementById('reportsTableBody');
         const searchInput = document.getElementById('searchInput');
         const sortSelect = document.getElementById('sortSelect');
+        const pearFilter = document.getElementById('pearFilter');
         const editModal = document.getElementById('editModal');
         const editChronologyForm = document.getElementById('editChronologyForm');
         const updateBtn = document.getElementById('updateBtn');
@@ -1143,7 +1303,6 @@
                 }
                 
                 displayUserProfile(currentUser);
-                document.getElementById('name').value = currentUser.name || '';
                 
                 // Clear public chronology filters
                 localStorage.removeItem('selectedDate');
@@ -1164,7 +1323,6 @@
                 
                 localStorage.setItem('emtUserData', JSON.stringify(currentUser));
                 displayUserProfile(currentUser);
-                document.getElementById('name').value = currentUser.name;
                 
                 // Clear public chronology filters
                 localStorage.removeItem('selectedDate');
@@ -1197,7 +1355,7 @@
             `;
         }
 
-        // Load current incident - AUTO LOAD FORM
+        // Load current incident
         function loadCurrentIncident() {
             const urlParams = new URLSearchParams(window.location.search);
             const incidentIdFromUrl = urlParams.get('incidentId');
@@ -1220,7 +1378,7 @@
                     showStatus('⚠️ No incident selected. Please select an incident first.', 'error');
                     incidentInfo.innerHTML = '<span style="color: #e74c3c;">No incident selected. Please select an incident from dashboard first.</span>';
                     
-                    document.querySelectorAll('#chronologyForm input, #chronologyForm textarea, #chronologyForm button').forEach(el => {
+                    document.querySelectorAll('#chronologyForm input, #chronologyForm select, #chronologyForm textarea, #chronologyForm button').forEach(el => {
                         el.disabled = true;
                     });
                     return;
@@ -1258,15 +1416,15 @@
                             }
                         `;
                         
-                        // Enable form AUTO
-                        document.querySelectorAll('#chronologyForm input, #chronologyForm textarea, #chronologyForm button').forEach(el => {
+                        // Enable form
+                        document.querySelectorAll('#chronologyForm input, #chronologyForm select, #chronologyForm textarea, #chronologyForm button').forEach(el => {
                             el.disabled = false;
                         });
                         
                         // Load reports for this incident
                         loadReports();
                         
-                        // Setup real-time listeners untuk auto-update
+                        // Setup real-time listeners
                         setupRealTimeListeners();
                         
                     } else {
@@ -1274,7 +1432,7 @@
                         incidentInfo.innerHTML = '<span style="color: #e74c3c;">Incident not found. Please select a valid incident.</span>';
                         
                         // Disable form
-                        document.querySelectorAll('#chronologyForm input, #chronologyForm textarea, #chronologyForm button').forEach(el => {
+                        document.querySelectorAll('#chronologyForm input, #chronologyForm select, #chronologyForm textarea, #chronologyForm button').forEach(el => {
                             el.disabled = true;
                         });
                     }
@@ -1297,35 +1455,35 @@
             }, 5000);
         }
 
-        // Setup real-time listeners untuk auto-update
+        // Setup real-time listeners
         function setupRealTimeListeners() {
             if (!currentIncidentId) return;
             
             console.log('Setting up real-time listeners for incident:', currentIncidentId);
             
-            // Clean up existing listeners jika ada
+            // Clean up existing listeners
             cleanupListeners();
             
-            // Listener untuk NEW collection (incidents/{incidentId}/chronology/)
+            // Listener for NEW collection (incidents/{incidentId}/chronology/)
             const newChronologyListener = db.collection('incidents').doc(currentIncidentId)
                 .collection('chronology')
                 .orderBy('createdAt', 'desc')
                 .onSnapshot((snapshot) => {
                     console.log('Real-time update from NEW chronology collection');
-                    loadReports(); // Auto reload
+                    loadReports();
                 }, (error) => {
                     console.error('Error in new chronology listener:', error);
                 });
             
             chronologyListeners.push(newChronologyListener);
             
-            // Listener untuk OLD collection (chronology/)
+            // Listener for OLD collection (chronology/)
             const oldChronologyListener = db.collection('chronology')
                 .where('incidentId', '==', currentIncidentId)
                 .orderBy('timestamp', 'desc')
                 .onSnapshot((snapshot) => {
                     console.log('Real-time update from OLD chronology collection');
-                    loadReports(); // Auto reload
+                    loadReports();
                 }, (error) => {
                     console.error('Error in old chronology listener:', error);
                 });
@@ -1348,7 +1506,7 @@
             }
         }
 
-        // Load reports for selected incident only - AUTO UPDATE
+        // Load reports for selected incident
         async function loadReports() {
             if (!currentIncidentId) {
                 reportsTableBody.innerHTML = `
@@ -1376,7 +1534,7 @@
             try {
                 reports = [];
                 
-                // 1. Load from NEW subcollection (incidents/{incidentId}/chronology/)
+                // 1. Load from NEW subcollection
                 const newSnapshot = await db.collection('incidents').doc(currentIncidentId)
                     .collection('chronology')
                     .orderBy('createdAt', 'desc')
@@ -1388,17 +1546,19 @@
                     report.source = 'new';
                     report.incidentId = currentIncidentId;
                     
-                    // Handle timestamp field
                     if (!report.createdAt && report.timestamp) {
                         report.createdAt = report.timestamp;
                     }
                     
+                    // Ensure pearCategories is an array
+                    if (!report.pearCategories) report.pearCategories = [];
+                    
                     reports.push(report);
                 });
                 
-                console.log(`📊 Loaded ${newSnapshot.size} reports from NEW subcollection for incident ${currentIncidentId}`);
+                console.log(`📊 Loaded ${newSnapshot.size} reports from NEW subcollection`);
                 
-                // 2. Load from OLD main collection (chronology/) - ONLY for this incident
+                // 2. Load from OLD main collection
                 try {
                     const oldSnapshot = await db.collection('chronology')
                         .where('incidentId', '==', currentIncidentId)
@@ -1411,21 +1571,22 @@
                         report.source = 'old';
                         report.incidentId = currentIncidentId;
                         
-                        // Handle timestamp field
                         if (!report.timestamp && report.createdAt) {
                             report.timestamp = report.createdAt;
                         }
                         
+                        if (!report.pearCategories) report.pearCategories = [];
+                        
                         reports.push(report);
                     });
                     
-                    console.log(`📊 Loaded ${oldSnapshot.size} reports from OLD main collection for incident ${currentIncidentId}`);
+                    console.log(`📊 Loaded ${oldSnapshot.size} reports from OLD main collection`);
                     
                 } catch (error) {
-                    console.log('No old collection data found for this incident:', error.message);
+                    console.log('No old collection data found:', error.message);
                 }
                 
-                console.log(`📊 Total reports for incident ${currentIncidentId}: ${reports.length}`);
+                console.log(`📊 Total reports: ${reports.length}`);
                 displayReports();
                 
             } catch (error) {
@@ -1443,7 +1604,18 @@
             }
         }
 
-        // Display reports with highlight for selected incident
+        // Helper to get badge class for category
+        function getCategoryBadge(cat) {
+            const map = {
+                'people': 'badge-people',
+                'environment': 'badge-environment',
+                'asset': 'badge-asset',
+                'reputation': 'badge-reputation'
+            };
+            return map[cat] || '';
+        }
+
+        // Display reports with PEAR filter
         function displayReports() {
             if (reports.length === 0) {
                 reportsTableBody.innerHTML = `
@@ -1463,8 +1635,15 @@
             if (searchTerm) {
                 filteredReports = reports.filter(report => 
                     (report.info && report.info.toLowerCase().includes(searchTerm)) ||
-                    (report.location && report.location.toLowerCase().includes(searchTerm)) ||
-                    (report.name && report.name.toLowerCase().includes(searchTerm))
+                    (report.pic && report.pic.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            // Apply PEAR filter
+            const selectedPear = pearFilter.value;
+            if (selectedPear !== 'all') {
+                filteredReports = filteredReports.filter(report => 
+                    report.pearCategories && report.pearCategories.includes(selectedPear)
                 );
             }
             
@@ -1473,7 +1652,6 @@
             filteredReports.sort((a, b) => {
                 let aTime, bTime;
                 
-                // Handle timestamp from both sources
                 if (a.createdAt) {
                     aTime = a.createdAt.toDate();
                 } else if (a.timestamp) {
@@ -1495,16 +1673,12 @@
                         return bTime - aTime;
                     case 'oldest':
                         return aTime - bTime;
-                    case 'name':
-                        const aName = a.name?.toLowerCase() || '';
-                        const bName = b.name?.toLowerCase() || '';
-                        return aName.localeCompare(bName);
-                    case 'location':
-                        const aLoc = a.location?.toLowerCase() || '';
-                        const bLoc = b.location?.toLowerCase() || '';
-                        return aLoc.localeCompare(bLoc);
+                    case 'pic':
+                        const aPic = a.pic?.toLowerCase() || '';
+                        const bPic = b.pic?.toLowerCase() || '';
+                        return aPic.localeCompare(bPic);
                     default:
-                        return bTime - aTime; // Default newest first
+                        return bTime - aTime;
                 }
             });
             
@@ -1512,8 +1686,6 @@
             reportsTableBody.innerHTML = '';
             filteredReports.forEach(report => {
                 const row = document.createElement('tr');
-                
-                // Highlight all rows since all belong to selected incident
                 row.classList.add('highlighted');
                 
                 // Format timestamp
@@ -1539,7 +1711,22 @@
                     }
                 }
                 
-                // Check if data is from old collection
+                // Get PIC display
+                const picValue = report.pic || '';
+                const picDisplay = getPICDisplay(picValue);
+                
+                // Build PEAR badges with ongoing status circle
+                const categories = report.pearCategories || [];
+                let badgesHtml = '';
+                categories.forEach(cat => {
+                    const badgeClass = getCategoryBadge(cat);
+                    const catDisplay = cat.charAt(0).toUpperCase() + cat.slice(1);
+                    // Add ongoing status circle inside each badge
+                    badgesHtml += `<span class="pear-badge ${badgeClass}"><span class="status-circle status-ongoing"></span>${catDisplay}</span> `;
+                });
+                if (badgesHtml === '') badgesHtml = '<span style="color:#999;">—</span>';
+                
+                // Old data badge
                 const isOldData = report.source === 'old';
                 const oldDataBadge = isOldData ? 
                     '<div class="old-data-badge"><i class="fas fa-history"></i> Old System Data</div>' : 
@@ -1551,12 +1738,11 @@
                         <div class="timestamp time">${timeStr}</div>
                         ${oldDataBadge}
                     </td>
-                    <td class="name">${report.name || 'Unknown Reporter'}</td>
-                    <td class="info">
-                        ${report.info || 'No detailed information provided'}
-                        ${isOldData ? '<div style="font-size:0.8rem;color:#666;font-style:italic;margin-top:5px;">(From old system structure)</div>' : ''}
+                    <td class="info">${report.info || 'No detailed information provided'}</td>
+                    <td>${badgesHtml}</td>
+                    <td class="location">
+                        ${picDisplay ? `<span class="pic-badge">${picDisplay}</span>` : 'PIC not specified'}
                     </td>
-                    <td class="location">${report.location || 'Location not specified'}</td>
                     <td class="actions">
                         <button class="action-btn edit-btn" title="Edit" onclick="editReport('${report.id}', '${report.source}')">
                             <i class="fas fa-edit"></i>
@@ -1571,7 +1757,135 @@
             });
         }
 
-        // Submit form - save to NEW subcollection only - AUTO CLEAR FORM
+        // Helper function to get PIC display value
+        function getPICDisplay(picValue) {
+            const picMap = {
+                'swc': 'SWC',
+                'wc': 'WC',
+                'ff': 'FF',
+                'fc': 'FC',
+                'cc': 'CC',
+                'planning': 'Planning',
+                'logistic': 'Logistic',
+                'operationchief': 'Operation Chief',
+                'pic1': 'PIC 1',
+                'pic2': 'PIC 2',
+                'pic3': 'PIC 3',
+                'pic4': 'PIC 4',
+                'pic5': 'PIC 5',
+                'pic6': 'PIC 6',
+                'pic7': 'PIC 7'
+            };
+            return picMap[picValue] || picValue;
+        }
+
+        // Helper to get checked PEAR categories from form
+        function getSelectedPearCategories() {
+            const categories = [];
+            if (document.getElementById('pearPeople').checked) categories.push('people');
+            if (document.getElementById('pearEnvironment').checked) categories.push('environment');
+            if (document.getElementById('pearAsset').checked) categories.push('asset');
+            if (document.getElementById('pearReputation').checked) categories.push('reputation');
+            return categories;
+        }
+
+        // Helper to get checked PEAR categories from edit form
+        function getEditSelectedPearCategories() {
+            const categories = [];
+            if (document.getElementById('editPearPeople').checked) categories.push('people');
+            if (document.getElementById('editPearEnvironment').checked) categories.push('environment');
+            if (document.getElementById('editPearAsset').checked) categories.push('asset');
+            if (document.getElementById('editPearReputation').checked) categories.push('reputation');
+            return categories;
+        }
+
+        // Create PEAR entries for a chronology report (status: on going)
+        async function createPearEntries(chronologyId, categories, reportBy, info) {
+            if (!currentIncidentId || categories.length === 0) return;
+            
+            const batch = db.batch();
+            const pearCollectionRef = db.collection('incidents').doc(currentIncidentId).collection('pear');
+            
+            for (const cat of categories) {
+                const pearRef = pearCollectionRef.doc();
+                batch.set(pearRef, {
+                    category: cat,
+                    description: info,
+                    status: 'on going',          // diubah dari 'plan' menjadi 'on going'
+                    name: reportBy,
+                    reportBy: reportBy,
+                    chronologyId: chronologyId,
+                    incidentId: currentIncidentId,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    source: 'from_chronology'
+                });
+            }
+            
+            await batch.commit();
+            console.log(`Created ${categories.length} PEAR entries for chronology ${chronologyId} with status 'on going'`);
+        }
+
+        // Delete all PEAR entries linked to a chronology ID
+        async function deletePearEntriesByChronologyId(chronologyId) {
+            if (!currentIncidentId || !chronologyId) return;
+            
+            const snapshot = await db.collection('incidents').doc(currentIncidentId)
+                .collection('pear')
+                .where('chronologyId', '==', chronologyId)
+                .get();
+            
+            if (snapshot.empty) return;
+            
+            const batch = db.batch();
+            snapshot.forEach(doc => batch.delete(doc.ref));
+            await batch.commit();
+            console.log(`Deleted ${snapshot.size} PEAR entries for chronology ${chronologyId}`);
+        }
+
+        // Update PEAR entries based on category changes (status: on going for new ones)
+        async function updatePearEntries(chronologyId, oldCategories, newCategories, reportBy, info) {
+            if (!currentIncidentId || !chronologyId) return;
+            
+            const added = newCategories.filter(c => !oldCategories.includes(c));
+            const removed = oldCategories.filter(c => !newCategories.includes(c));
+            
+            const batch = db.batch();
+            const pearCollectionRef = db.collection('incidents').doc(currentIncidentId).collection('pear');
+            
+            // Add new categories with status 'on going'
+            for (const cat of added) {
+                const pearRef = pearCollectionRef.doc();
+                batch.set(pearRef, {
+                    category: cat,
+                    description: info,
+                    status: 'on going',          // status baru
+                    name: reportBy,
+                    reportBy: reportBy,
+                    chronologyId: chronologyId,
+                    incidentId: currentIncidentId,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    source: 'from_chronology'
+                });
+            }
+            
+            // Remove old categories
+            if (removed.length > 0) {
+                const snapshot = await db.collection('incidents').doc(currentIncidentId)
+                    .collection('pear')
+                    .where('chronologyId', '==', chronologyId)
+                    .where('category', 'in', removed)
+                    .get();
+                
+                snapshot.forEach(doc => batch.delete(doc.ref));
+            }
+            
+            await batch.commit();
+            console.log(`PEAR entries updated: added ${added.length} (on going), removed ${removed.length}`);
+        }
+
+        // Submit form
         chronologyForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -1580,12 +1894,14 @@
                 return;
             }
             
-            const location = document.getElementById('location').value.trim();
+            const pic = document.getElementById('pic').value;
             const info = document.getElementById('info').value.trim();
-            const reportBy = document.getElementById('name').value.trim();
+            // Ambil nama dari currentUser (tidak ada input field lagi)
+            const reportBy = currentUser.name ? currentUser.name.trim() : 'Unknown';
+            const selectedCategories = getSelectedPearCategories();
             
-            if (!location) {
-                showStatus('❌ Please enter a location', 'error');
+            if (!pic) {
+                showStatus('❌ Please select a PIC', 'error');
                 return;
             }
             
@@ -1594,35 +1910,34 @@
                 return;
             }
             
-            if (!reportBy) {
-                showStatus('❌ Report By cannot be empty', 'error');
-                return;
-            }
-            
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
             
             try {
-                // Save to NEW subcollection only
-                await db.collection('incidents').doc(currentIncidentId)
+                // Save to NEW chronology subcollection
+                const docRef = await db.collection('incidents').doc(currentIncidentId)
                     .collection('chronology')
                     .add({
-                        name: reportBy,
-                        location: location,
+                        name: reportBy,           // menyimpan nama reporter
+                        pic: pic,
                         info: info,
                         reportBy: reportBy,
                         submittedBy: currentUser.userId || 'unknown',
                         incidentId: currentIncidentId,
+                        pearCategories: selectedCategories,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                         timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 
-                // AUTO CLEAR FORM SETELAH SUBMIT
-                chronologyForm.reset();
-                document.getElementById('name').value = currentUser.name || '';
+                // Create corresponding PEAR entries (status on going)
+                if (selectedCategories.length > 0) {
+                    await createPearEntries(docRef.id, selectedCategories, reportBy, info);
+                }
                 
-                showStatus('✅ Chronology report submitted successfully!', 'success');
-                // Real-time listener akan auto-update table
+                // Clear form (kecuali PIC dan info direset)
+                chronologyForm.reset();
+                
+                showStatus('✅ Chronology report submitted successfully! PEAR entries created.', 'success');
                 
             } catch (error) {
                 console.error('Error submitting report:', error);
@@ -1633,7 +1948,7 @@
             }
         });
 
-        // Edit report with source detection
+        // Edit report
         window.editReport = async (reportId, source) => {
             if (!currentIncidentId) {
                 showStatus('❌ No incident selected', 'error');
@@ -1642,13 +1957,10 @@
             
             try {
                 let doc;
-                
                 if (source === 'new') {
-                    // Edit from NEW subcollection
                     doc = await db.collection('incidents').doc(currentIncidentId)
                         .collection('chronology').doc(reportId).get();
                 } else {
-                    // Edit from OLD main collection
                     doc = await db.collection('chronology').doc(reportId).get();
                 }
                     
@@ -1658,8 +1970,15 @@
                     // Fill edit form
                     document.getElementById('editRecordId').value = reportId;
                     document.getElementById('editSource').value = source;
-                    document.getElementById('editLocation').value = report.location || '';
+                    document.getElementById('editPic').value = report.pic || '';
                     document.getElementById('editInfo').value = report.info || '';
+                    
+                    // Set PEAR checkboxes
+                    const categories = report.pearCategories || [];
+                    document.getElementById('editPearPeople').checked = categories.includes('people');
+                    document.getElementById('editPearEnvironment').checked = categories.includes('environment');
+                    document.getElementById('editPearAsset').checked = categories.includes('asset');
+                    document.getElementById('editPearReputation').checked = categories.includes('reputation');
                     
                     editModal.style.display = 'block';
                 } else {
@@ -1672,26 +1991,27 @@
         };
 
         // Close edit modal
-        function closeEditModal() {
+        window.closeEditModal = function() {
             editModal.style.display = 'none';
             editChronologyForm.reset();
-        }
+        };
 
-        // Handle edit form submission for both sources - AUTO UPDATE
+        // Handle edit form submission
         editChronologyForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const recordId = document.getElementById('editRecordId').value;
             const source = document.getElementById('editSource').value;
-            const location = document.getElementById('editLocation').value.trim();
+            const pic = document.getElementById('editPic').value;
             const info = document.getElementById('editInfo').value.trim();
+            const newCategories = getEditSelectedPearCategories();
             
             if (!currentIncidentId) {
                 showStatus('❌ No incident selected', 'error');
                 return;
             }
             
-            if (!location || !info) {
+            if (!pic || !info) {
                 showStatus('❌ Please fill all fields', 'error');
                 return;
             }
@@ -1700,28 +2020,42 @@
             updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
             
             try {
+                // Get old categories before update
+                let oldCategories = [];
                 if (source === 'new') {
-                    // Update in NEW subcollection
+                    const oldDoc = await db.collection('incidents').doc(currentIncidentId)
+                        .collection('chronology').doc(recordId).get();
+                    oldCategories = oldDoc.data().pearCategories || [];
+                } else {
+                    const oldDoc = await db.collection('chronology').doc(recordId).get();
+                    oldCategories = oldDoc.data().pearCategories || [];
+                }
+                
+                if (source === 'new') {
                     await db.collection('incidents').doc(currentIncidentId)
                         .collection('chronology').doc(recordId)
                         .update({
-                            location: location,
+                            pic: pic,
                             info: info,
+                            pearCategories: newCategories,
                             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                         });
                 } else {
-                    // Update in OLD main collection
                     await db.collection('chronology').doc(recordId)
                         .update({
-                            location: location,
+                            pic: pic,
                             info: info,
+                            pearCategories: newCategories,
                             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                         });
                 }
                 
+                // Update linked PEAR entries
+                const reportBy = currentUser.name ? currentUser.name : 'Unknown';
+                await updatePearEntries(recordId, oldCategories, newCategories, reportBy, info);
+                
                 showStatus('✅ Report updated successfully!', 'success');
                 closeEditModal();
-                // Real-time listener akan auto-update
                 
             } catch (error) {
                 console.error('Error updating report:', error);
@@ -1739,43 +2073,42 @@
             }
         });
 
-        // Delete report with source detection - AUTO UPDATE
-        async function deleteReport(reportId, source) {
+        // Delete report and its linked PEAR entries
+        window.deleteReport = async function(reportId, source) {
             if (!currentIncidentId) {
                 showStatus('❌ No incident selected', 'error');
                 return;
             }
             
-            if (!confirm('Are you sure you want to delete this report? This action cannot be undone.')) {
+            if (!confirm('Are you sure you want to delete this report? All linked PEAR entries will also be deleted.')) {
                 return;
             }
             
             try {
+                // Delete linked PEAR entries first
+                await deletePearEntriesByChronologyId(reportId);
+                
                 if (source === 'new') {
-                    // Delete from NEW subcollection
                     await db.collection('incidents').doc(currentIncidentId)
                         .collection('chronology').doc(reportId).delete();
                 } else {
-                    // Delete from OLD main collection
                     await db.collection('chronology').doc(reportId).delete();
                 }
                     
-                showStatus('✅ Report deleted successfully!', 'success');
-                // Real-time listener akan auto-update
+                showStatus('✅ Report and linked PEAR entries deleted successfully!', 'success');
                 
             } catch (error) {
                 console.error('Error deleting report:', error);
                 showStatus('❌ Error deleting report. Please try again.', 'error');
             }
-        }
+        };
 
-        // Search functionality
+        // Search, filter, sort events
         searchInput.addEventListener('input', displayReports);
-        
-        // Sort functionality
         sortSelect.addEventListener('change', displayReports);
+        pearFilter.addEventListener('change', displayReports);
 
-        // Table sorting functionality
+        // Table sorting
         document.querySelectorAll('.chronology-table th[data-sort]').forEach(header => {
             header.addEventListener('click', () => {
                 const sortBy = header.getAttribute('data-sort');
@@ -1785,22 +2118,18 @@
         });
 
         // Go back to admin-info.html
-        function goBackToAdminInfo() {
-            // Clean up listeners sebelum redirect
+        window.goBackToAdminInfo = function() {
             cleanupListeners();
-            
             if (currentIncidentId) {
                 window.location.href = `admin-info.html?incidentId=${currentIncidentId}`;
             } else {
                 window.location.href = 'admin-dashboard.html';
             }
-        }
+        };
 
-        // Logout functionality
+        // Logout
         logoutBtn.addEventListener('click', () => {
-            // Clean up listeners
             cleanupListeners();
-            
             localStorage.removeItem('emtUserData');
             localStorage.removeItem('currentIncidentId');
             localStorage.removeItem('selectedDate');
@@ -1808,10 +2137,9 @@
             window.location.href = 'index.html';
         });
 
-        // Initialize the page
+        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             checkUserLogin();
-            
             setTimeout(() => {
                 document.querySelectorAll('.chronology-table tr').forEach((row, index) => {
                     row.style.animationDelay = `${index * 0.1}s`;
@@ -1819,36 +2147,8 @@
             }, 1000);
         });
 
-        // Clean up listeners bila page ditutup
-        window.addEventListener('beforeunload', function() {
-            cleanupListeners();
-        });
-
-        // Handle page visibility changes
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && currentIncidentId) {
-                // Refresh data when page becomes visible
-                console.log('Page became visible, auto-refreshing data');
-            }
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === '/') {
-                e.preventDefault();
-                searchInput.focus();
-            }
-            
-            if (e.key === 'Escape') {
-                if (document.activeElement === searchInput) {
-                    searchInput.value = '';
-                    displayReports();
-                }
-                if (editModal.style.display === 'block') {
-                    closeEditModal();
-                }
-            }
-        });
+        // Clean up on page unload
+        window.addEventListener('beforeunload', cleanupListeners);
     </script>
 </body>
 </html>
