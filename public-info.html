@@ -284,6 +284,70 @@
             color: var(--primary);
         }
 
+        /* Header Pagination Styling (copied from admin-info) */
+        .header-pagination {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 25px;
+            border: 1px solid rgba(74, 111, 165, 0.2);
+        }
+
+        .header-pagination-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid rgba(74, 111, 165, 0.3);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .header-pagination-btn:hover:not(:disabled) {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .header-pagination-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .header-page-number {
+            min-width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--dark);
+            background: rgba(74, 111, 165, 0.1);
+            border: 1px solid rgba(74, 111, 165, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .header-page-number:hover {
+            background: rgba(74, 111, 165, 0.2);
+        }
+
+        .header-page-number.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
         .boxes-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -531,82 +595,36 @@
             word-break: break-word;
         }
 
-        /* Pagination Card */
-        .pagination-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: var(--card-shadow);
-            border: 1px solid rgba(74, 111, 165, 0.1);
-            margin-top: 20px;
-            margin-bottom: 30px;
-        }
-
-        .pagination-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-        }
-
-        .pagination {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .page-number {
-            padding: 10px 16px;
-            background: rgba(74, 111, 165, 0.1);
-            color: var(--primary);
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            min-width: 40px;
-            text-align: center;
-            border: 2px solid transparent;
-        }
-
-        .page-number:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(74, 111, 165, 0.3);
-        }
-
-        .page-number.active {
+        /* PIC Badge Styling (from admin) */
+        .pic-badge {
+            display: inline-block;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            box-shadow: 0 6px 20px rgba(74, 111, 165, 0.3);
-            border-color: var(--primary);
-        }
-
-        .page-next {
-            padding: 10px 16px;
-            background: rgba(74, 111, 165, 0.1);
-            color: var(--primary);
-            border-radius: 10px;
-            cursor: pointer;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
             font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            min-width: 40px;
-            text-align: center;
-            border: 2px solid transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .page-next:hover {
-            background: var(--primary);
+        /* PEAR Badge Styling (from admin) */
+        .pear-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 5px;
+            margin-bottom: 3px;
             color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(74, 111, 165, 0.3);
+            text-transform: uppercase;
         }
+
+        .badge-people { background: #e67e22; }
+        .badge-environment { background: #27ae60; }
+        .badge-asset { background: #3498db; }
+        .badge-reputation { background: #9b59b6; }
 
         /* Table Controls */
         .table-controls {
@@ -871,16 +889,6 @@
                 width: 100%;
             }
             
-            .pagination {
-                gap: 5px;
-            }
-            
-            .page-number {
-                padding: 8px 14px;
-                min-width: 35px;
-                font-size: 0.9rem;
-            }
-            
             .record-field {
                 flex-direction: column;
             }
@@ -912,10 +920,6 @@
             .view-btn {
                 padding: 8px 15px;
                 font-size: 0.85rem;
-            }
-            
-            .pagination-card {
-                padding: 20px;
             }
             
             .action-buttons {
@@ -990,19 +994,6 @@
             <!-- Incident data will be loaded here dynamically -->
         </div>
 
-        <!-- Pagination Card -->
-        <div id="paginationCard" class="pagination-card" style="display: none;">
-            <div class="pagination-container">
-                <!-- Pagination will be loaded here dynamically -->
-            </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-            <button class="download-btn" onclick="downloadIncidentPDF()">
-                <i class="fas fa-file-pdf"></i> Download PDF Report
-            </button>
-        </div>
 
         <!-- Error State -->
         <div id="errorState" class="error-state" style="display: none;">
@@ -1037,8 +1028,8 @@
         let allIncidentsData = [];
         let currentIncidentData = null;
         let currentIncidentId = null;
-        let currentPage = 1;
-        const itemsPerPage = 1;
+        let currentIncidentIndex = 0;
+        let filteredIncidents = []; // incidents from the same date
         let selectedDate = null;
         
         // Store all subcollection data
@@ -1210,6 +1201,39 @@
             return string ? string.charAt(0).toUpperCase() + string.slice(1) : '';
         }
 
+        // Get PIC display value (from admin)
+        function getPICDisplay(picValue) {
+            const picMap = {
+                'swc': 'SWC',
+                'wc': 'WC',
+                'fc': 'FC',
+                'cc': 'CC',
+                'ff': 'FF',
+                'planning': 'Planning',
+                'logistic': 'Logistic',
+                'operationchief': 'Operation Chief',
+                'pic1': 'PIC 1',
+                'pic2': 'PIC 2',
+                'pic3': 'PIC 3',
+                'pic4': 'PIC 4',
+                'pic5': 'PIC 5',
+                'pic6': 'PIC 6',
+                'pic7': 'PIC 7'
+            };
+            return picMap[picValue] || picValue || 'N/A';
+        }
+
+        // Get badge class for PEAR category (from admin)
+        function getCategoryBadge(cat) {
+            const map = {
+                'people': 'badge-people',
+                'environment': 'badge-environment',
+                'asset': 'badge-asset',
+                'reputation': 'badge-reputation'
+            };
+            return map[cat] || '';
+        }
+
         // Get status badge class
         function getStatusBadgeClass(status) {
             const statusValue = (status || '').toLowerCase();
@@ -1277,12 +1301,10 @@
         async function loadIncidentData(page = 1) {
             try {
                 console.log('Loading incident data...');
-                currentPage = page;
                 
                 // Show loading
                 document.getElementById('loadingState').style.display = 'block';
                 document.getElementById('errorState').style.display = 'none';
-                hidePagination();
 
                 // Load the selected incident first
                 const incidentDoc = await db.collection('incidents').doc(currentIncidentId).get();
@@ -1319,6 +1341,18 @@
                     console.log(`Found ${allIncidentsData.length} incidents from the same date`);
                 }
 
+                // Set filteredIncidents for pagination
+                filteredIncidents = allIncidentsData;
+                
+                // Find current index
+                currentIncidentIndex = filteredIncidents.findIndex(inc => inc.id === currentIncidentId);
+                if (currentIncidentIndex === -1 && filteredIncidents.length > 0) {
+                    // Fallback to first if not found
+                    currentIncidentIndex = 0;
+                    currentIncidentId = filteredIncidents[0].id;
+                    currentIncidentData = filteredIncidents[0];
+                }
+
                 // Update date display
                 if (selectedDate) {
                     document.getElementById('currentDateDisplay').textContent = formatDateDisplay(selectedDate);
@@ -1332,12 +1366,6 @@
 
                 // Load ALL subcollections in background
                 await loadAllSubcollections();
-
-                // Create pagination
-                if (allIncidentsData.length > 1) {
-                    createSimplePagination();
-                    showPagination();
-                }
 
             } catch (error) {
                 console.error('Error loading incident data:', error);
@@ -1369,10 +1397,6 @@
                 });
                 
                 console.log(`Loaded ${data.length} chronology records`);
-                if (data.length > 0) {
-                    console.log('Sample chronology timestamp:', getRecordTimestamp(data[0]));
-                }
-                
                 return data;
                 
             } catch (error) {
@@ -1402,10 +1426,6 @@
                 });
                 
                 console.log(`Loaded ${data.length} IP status records`);
-                if (data.length > 0) {
-                    console.log('Sample IP status timestamp:', getRecordTimestamp(data[0]));
-                }
-                
                 return data;
                 
             } catch (error) {
@@ -1435,10 +1455,6 @@
                 });
                 
                 console.log(`Loaded ${data.length} PEAR records`);
-                if (data.length > 0) {
-                    console.log('Sample PEAR timestamp:', getRecordTimestamp(data[0]));
-                }
-                
                 return data;
                 
             } catch (error) {
@@ -1511,15 +1527,27 @@
                         <h2 class="section-title">
                             <i class="fas fa-fire"></i> ${currentIncidentData.name || 'Unnamed Incident'}
                         </h2>
-                        <div class="table-controls">
-                            <span class="record-count">
-                                Date: ${incidentDate} | 
-                                ${allIncidentsData.length} incident(s) | 
-                                Page ${currentPage} of ${Math.ceil(allIncidentsData.length / itemsPerPage)}
-                            </span>
-                            <button class="refresh-btn" onclick="refreshData()" title="Refresh Data">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="header-pagination" id="headerPagination" style="display: none;">
+                                <button class="header-pagination-btn" id="headerPrevBtn" onclick="goToPreviousIncident()" disabled>
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <div class="header-page-number" id="headerPage1" onclick="goToIncidentByIndex(0)">1</div>
+                                <div class="header-page-number" id="headerPage2" onclick="goToIncidentByIndex(1)">2</div>
+                                <div class="header-page-number" id="headerPage3" onclick="goToIncidentByIndex(2)">3</div>
+                                <button class="header-pagination-btn" id="headerNextBtn" onclick="goToNextIncident()">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            <div class="table-controls">
+                                <span class="record-count">
+                                    Date: ${incidentDate} | 
+                                    ${filteredIncidents.length} incident(s)
+                                </span>
+                                <button class="refresh-btn" onclick="refreshData()" title="Refresh Data">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     
@@ -1568,7 +1596,7 @@
                             </div>
                         </div>
                         
-                        <!-- BOX 2: CHRONOLOGY - SHOW ALL RECORDS -->
+                        <!-- BOX 2: CHRONOLOGY - SHOW ALL RECORDS (NO REPORTED BY, PIC + PEAR CATEGORIES) -->
                         <div class="info-box">
                             <div class="box-header">
                                 <h3 class="box-title">
@@ -1585,7 +1613,7 @@
                             </div>
                         </div>
                         
-                        <!-- BOX 3: IP STATUS - SHOW ALL RECORDS -->
+                        <!-- BOX 3: IP STATUS - SHOW ALL RECORDS (NO REPORTED BY) -->
                         <div class="info-box">
                             <div class="box-header">
                                 <h3 class="box-title">
@@ -1602,7 +1630,7 @@
                             </div>
                         </div>
                         
-                        <!-- BOX 4: PEAR - SHOW ALL RECORDS -->
+                        <!-- BOX 4: PEAR - SHOW ALL RECORDS (NO REPORTED BY) -->
                         <div class="info-box">
                             <div class="box-header">
                                 <h3 class="box-title">
@@ -1621,13 +1649,16 @@
                     </div>
                 </div>
             `;
+
+            // Update header pagination after container is rendered
+            updateHeaderPagination();
         }
 
         // ===== IMPROVED DISPLAY FUNCTIONS WITH TIMESTAMP =====
         
         // Update subcollection display with ALL data in separate containers
         function updateSubcollectionDisplay() {
-            // Update Chronology - SHOW ALL RECORDS
+            // Update Chronology - SHOW ALL RECORDS (NO REPORTED BY, PIC + PEAR CATEGORIES)
             const chronologyContainer = document.getElementById('chronologyData');
             if (chronologyContainer) {
                 if (allChronologyData.length === 0) {
@@ -1660,6 +1691,20 @@
                             }
                         }
                         
+                        // Get PIC value
+                        const picValue = record.pic || 'N/A';
+                        const picDisplay = getPICDisplay(picValue);
+                        
+                        // Get PEAR categories
+                        const categories = record.pearCategories || [];
+                        let badgesHtml = '';
+                        categories.forEach(cat => {
+                            const badgeClass = getCategoryBadge(cat);
+                            const catDisplay = cat.charAt(0).toUpperCase() + cat.slice(1);
+                            badgesHtml += `<span class="pear-badge ${badgeClass}">${catDisplay}</span> `;
+                        });
+                        if (badgesHtml === '') badgesHtml = '<span class="info-value empty">None</span>';
+                        
                         chronologyHTML += `
                             <div class="record-container">
                                 <div class="record-header">
@@ -1670,13 +1715,13 @@
                                 </div>
                                 
                                 <div class="record-field">
-                                    <span class="record-field-label">Report By:</span>
-                                    <span class="record-field-value">${record.name || record.reportBy || 'N/A'}</span>
+                                    <span class="record-field-label">PIC:</span>
+                                    <span class="record-field-value"><span class="pic-badge">${picDisplay}</span></span>
                                 </div>
                                 
                                 <div class="record-field">
-                                    <span class="record-field-label">Location:</span>
-                                    <span class="record-field-value">${record.location || 'N/A'}</span>
+                                    <span class="record-field-label">PEAR Categories:</span>
+                                    <span class="record-field-value">${badgesHtml}</span>
                                 </div>
                                 
                                 <div class="record-field">
@@ -1691,7 +1736,7 @@
                 }
             }
 
-            // Update IP Status - SHOW ALL RECORDS
+            // Update IP Status - SHOW ALL RECORDS (NO REPORTED BY)
             const ipStatusContainer = document.getElementById('ipStatusData');
             if (ipStatusContainer) {
                 if (allIPStatusData.length === 0) {
@@ -1726,7 +1771,6 @@
                         
                         const status = record.ipStatus || record.status || 'Unknown';
                         const ipId = record.IPid || record.id || 'N/A';
-                        const reportedBy = record.name || record.reportBy || record.reportedBy || 'N/A';
                         const location = record.location || 'Not specified';
                         const info = record.infoIncident || record.info || 'No additional information';
                         
@@ -1737,11 +1781,6 @@
                                         <i class="fas fa-shield-alt"></i> IP Status #${index + 1}
                                     </span>
                                     ${timestampStr}
-                                </div>
-                                
-                                <div class="record-field">
-                                    <span class="record-field-label">Reported By:</span>
-                                    <span class="record-field-value">${reportedBy}</span>
                                 </div>
                                 
                                 <div class="record-field">
@@ -1775,7 +1814,7 @@
                 }
             }
 
-            // Update PEAR - SHOW ALL RECORDS
+            // Update PEAR - SHOW ALL RECORDS (NO REPORTED BY)
             const pearContainer = document.getElementById('pearData');
             if (pearContainer) {
                 if (allPEARData.length === 0) {
@@ -1808,7 +1847,6 @@
                             }
                         }
                         
-                        const reportedBy = record.name || record.reportBy || 'N/A';
                         const category = record.category || 'General';
                         const description = record.description || 'No description available';
                         const status = record.status || 'Unknown';
@@ -1820,11 +1858,6 @@
                                         <i class="fas fa-chart-bar"></i> PEAR #${index + 1} - ${capitalizeFirstLetter(category)}
                                     </span>
                                     ${timestampStr}
-                                </div>
-                                
-                                <div class="record-field">
-                                    <span class="record-field-label">Reported By:</span>
-                                    <span class="record-field-value">${reportedBy}</span>
                                 </div>
                                 
                                 <div class="record-field">
@@ -1858,7 +1891,8 @@
         function viewThisIncident(incidentId) {
             currentIncidentId = incidentId;
             localStorage.setItem('currentViewIncidentId', incidentId);
-            loadIncidentData(1);
+            // Reload the page to show the new incident
+            window.location.href = `public-info.html?incidentId=${incidentId}`;
         }
 
         // View Chronology details
@@ -2014,6 +2048,104 @@
             }
         }
 
+        // ===== HEADER PAGINATION FUNCTIONS (copied from admin-info) =====
+        function updateHeaderPagination() {
+            if (!filteredIncidents || filteredIncidents.length <= 1) {
+                const headerPagination = document.getElementById('headerPagination');
+                if (headerPagination) headerPagination.style.display = 'none';
+                return;
+            }
+            
+            const headerPagination = document.getElementById('headerPagination');
+            if (headerPagination) headerPagination.style.display = 'flex';
+            
+            const prevBtn = document.getElementById('headerPrevBtn');
+            const nextBtn = document.getElementById('headerNextBtn');
+            const page1 = document.getElementById('headerPage1');
+            const page2 = document.getElementById('headerPage2');
+            const page3 = document.getElementById('headerPage3');
+            
+            // Update prev/next button states
+            if (prevBtn) prevBtn.disabled = currentIncidentIndex === 0;
+            if (nextBtn) nextBtn.disabled = currentIncidentIndex === filteredIncidents.length - 1;
+            
+            // Calculate which pages to show
+            let pageNumbers = [];
+            
+            if (filteredIncidents.length <= 3) {
+                // Show all pages if 3 or less
+                for (let i = 0; i < filteredIncidents.length; i++) {
+                    pageNumbers.push(i);
+                }
+            } else {
+                // Show dynamic pages based on current position
+                if (currentIncidentIndex === 0) {
+                    pageNumbers = [0, 1, 2];
+                } else if (currentIncidentIndex === filteredIncidents.length - 1) {
+                    pageNumbers = [filteredIncidents.length - 3, filteredIncidents.length - 2, filteredIncidents.length - 1];
+                } else {
+                    pageNumbers = [currentIncidentIndex - 1, currentIncidentIndex, currentIncidentIndex + 1];
+                }
+            }
+            
+            // Update page numbers
+            if (page1) {
+                if (pageNumbers[0] !== undefined) {
+                    page1.textContent = pageNumbers[0] + 1;
+                    page1.onclick = () => goToIncidentByIndex(pageNumbers[0]);
+                    page1.className = pageNumbers[0] === currentIncidentIndex ? 'header-page-number active' : 'header-page-number';
+                    page1.style.display = 'flex';
+                } else {
+                    page1.style.display = 'none';
+                }
+            }
+            
+            if (page2) {
+                if (pageNumbers[1] !== undefined) {
+                    page2.textContent = pageNumbers[1] + 1;
+                    page2.onclick = () => goToIncidentByIndex(pageNumbers[1]);
+                    page2.className = pageNumbers[1] === currentIncidentIndex ? 'header-page-number active' : 'header-page-number';
+                    page2.style.display = 'flex';
+                } else {
+                    page2.style.display = 'none';
+                }
+            }
+            
+            if (page3) {
+                if (pageNumbers[2] !== undefined) {
+                    page3.textContent = pageNumbers[2] + 1;
+                    page3.onclick = () => goToIncidentByIndex(pageNumbers[2]);
+                    page3.className = pageNumbers[2] === currentIncidentIndex ? 'header-page-number active' : 'header-page-number';
+                    page3.style.display = 'flex';
+                } else {
+                    page3.style.display = 'none';
+                }
+            }
+        }
+
+        function goToIncidentByIndex(index) {
+            if (index >= 0 && index < filteredIncidents.length) {
+                const incidentId = filteredIncidents[index].id;
+                window.location.href = `public-info.html?incidentId=${incidentId}`;
+            }
+        }
+
+        function goToPreviousIncident() {
+            if (currentIncidentIndex > 0) {
+                const prevIndex = currentIncidentIndex - 1;
+                const incidentId = filteredIncidents[prevIndex].id;
+                window.location.href = `public-info.html?incidentId=${incidentId}`;
+            }
+        }
+
+        function goToNextIncident() {
+            if (currentIncidentIndex < filteredIncidents.length - 1) {
+                const nextIndex = currentIncidentIndex + 1;
+                const incidentId = filteredIncidents[nextIndex].id;
+                window.location.href = `public-info.html?incidentId=${incidentId}`;
+            }
+        }
+
         // Display no data message
         function displayNoData() {
             const container = document.getElementById('incidentContainer');
@@ -2033,88 +2165,6 @@
             document.getElementById('errorMessage').textContent = message;
         }
 
-        // Show pagination card
-        function showPagination() {
-            const paginationCard = document.getElementById('paginationCard');
-            if (paginationCard) {
-                paginationCard.style.display = 'block';
-            }
-        }
-
-        // Hide pagination card
-        function hidePagination() {
-            const paginationCard = document.getElementById('paginationCard');
-            if (paginationCard) {
-                paginationCard.style.display = 'none';
-            }
-        }
-
-        // Create simple pagination
-        function createSimplePagination() {
-            const paginationContainer = document.querySelector('.pagination-container');
-            const totalPages = Math.ceil(allIncidentsData.length / itemsPerPage);
-            
-            if (totalPages <= 1) {
-                hidePagination();
-                return;
-            }
-            
-            let paginationHTML = '<div class="pagination">';
-            
-            if (totalPages <= 2) {
-                for (let i = 1; i <= totalPages; i++) {
-                    paginationHTML += `<span class="page-number ${currentPage === i ? 'active' : ''}" onclick="goToPage(${i})">${i}</span>`;
-                }
-                
-                if (currentPage < totalPages) {
-                    paginationHTML += `<span class="page-next" onclick="goToPage(${currentPage + 1})">
-                        <i class="fas fa-chevron-right"></i>
-                    </span>`;
-                }
-            } else {
-                if (currentPage === 1) {
-                    paginationHTML += `<span class="page-number active" onclick="goToPage(1)">1</span>`;
-                    paginationHTML += `<span class="page-number" onclick="goToPage(2)">2</span>`;
-                    paginationHTML += `<span class="page-next" onclick="goToPage(2)">
-                        <i class="fas fa-chevron-right"></i>
-                    </span>`;
-                } else if (currentPage === totalPages) {
-                    paginationHTML += `<span class="page-next" onclick="goToPage(${totalPages - 1})">
-                        <i class="fas fa-chevron-left"></i>
-                    </span>`;
-                    paginationHTML += `<span class="page-number" onclick="goToPage(${totalPages - 1})">${totalPages - 1}</span>`;
-                    paginationHTML += `<span class="page-number active" onclick="goToPage(${totalPages})">${totalPages}</span>`;
-                } else {
-                    paginationHTML += `<span class="page-number active" onclick="goToPage(${currentPage})">${currentPage}</span>`;
-                    paginationHTML += `<span class="page-number" onclick="goToPage(${currentPage + 1})">${currentPage + 1}</span>`;
-                    paginationHTML += `<span class="page-next" onclick="goToPage(${currentPage + 1})">
-                        <i class="fas fa-chevron-right"></i>
-                    </span>`;
-                }
-            }
-            
-            paginationHTML += '</div>';
-            paginationContainer.innerHTML = paginationHTML;
-        }
-
-        // Go to specific page
-        function goToPage(page) {
-            if (page !== currentPage && page >= 1 && page <= Math.ceil(allIncidentsData.length / itemsPerPage)) {
-                // Get the incident for this page
-                const startIndex = (page - 1) * itemsPerPage;
-                const incidentForPage = allIncidentsData[startIndex];
-                
-                if (incidentForPage) {
-                    currentIncidentId = incidentForPage.id;
-                    currentIncidentData = incidentForPage;
-                    localStorage.setItem('currentViewIncidentId', incidentForPage.id);
-                    
-                    // Reload everything for this incident
-                    loadIncidentData(page);
-                }
-            }
-        }
-
         // Refresh data
         function refreshData() {
             const btn = document.querySelector('.refresh-btn');
@@ -2122,7 +2172,7 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             btn.disabled = true;
             
-            loadIncidentData(currentPage);
+            loadIncidentData();
             
             setTimeout(() => {
                 if (btn) {
@@ -2132,7 +2182,7 @@
             }, 1000);
         }
 
-        // Download incident as PDF
+        // Download incident as PDF - MODIFIED to include PEAR categories in chronology
         async function downloadIncidentPDF() {
             if (!currentIncidentData) {
                 alert('No incident data to download');
@@ -2204,7 +2254,7 @@
                 
                 let finalY = doc.lastAutoTable.finalY + 15;
                 
-                // Add Chronology section if data exists
+                // Add Chronology section if data exists - NOW INCLUDES PEAR CATEGORIES COLUMN
                 if (allChronologyData.length > 0) {
                     doc.setFontSize(16);
                     doc.setTextColor(60, 60, 60);
@@ -2216,18 +2266,24 @@
                         const timestamp = getRecordTimestamp(item);
                         const time = timestamp ? formatTimeDisplay(timestamp) : 'N/A';
                         const date = timestamp ? formatDateDisplay(timestamp) : 'N/A';
+                        const picDisplay = getPICDisplay(item.pic || 'N/A');
+                        
+                        // Get PEAR categories as comma-separated string
+                        const categories = item.pearCategories || [];
+                        const categoriesStr = categories.map(c => c.charAt(0).toUpperCase() + c.slice(1)).join(', ') || 'None';
+                        
                         return [
                             index + 1,
                             `${time}\n${date}`,
-                            item.name || 'Report',
-                            item.location || 'N/A',
+                            picDisplay,
+                            categoriesStr,
                             item.info || 'No details'
                         ];
                     });
                     
                     doc.autoTable({
                         startY: finalY,
-                        head: [['No.', 'Time & Date', 'Reported By', 'Location', 'Details']],
+                        head: [['No.', 'Time & Date', 'PIC', 'PEAR Categories', 'Details']],
                         body: chronologyForPDF,
                         theme: 'grid',
                         headStyles: {
@@ -2247,9 +2303,9 @@
                         columnStyles: {
                             0: { cellWidth: 15 },
                             1: { cellWidth: 35 },
-                            2: { cellWidth: 30 },
-                            3: { cellWidth: 35 },
-                            4: { cellWidth: 55 }
+                            2: { cellWidth: 25 },
+                            3: { cellWidth: 30 },
+                            4: { cellWidth: 45 }
                         }
                     });
                     
@@ -2274,20 +2330,21 @@
                         const location = item.location || 'Not specified';
                         const info = item.infoIncident || item.info || 'No additional information';
                         const ipStatus = capitalizeFirstLetter(item.ipStatus || item.status || 'Unknown');
-                        const reportedBy = item.name || item.reportBy || item.reportedBy || 'N/A';
+                        const timestamp = getRecordTimestamp(item);
+                        const time = timestamp ? formatTimeDisplay(timestamp) : 'N/A';
                         
                         return [
                             ipId,
                             location,
                             info,
                             ipStatus,
-                            reportedBy
+                            time
                         ];
                     });
                     
                     doc.autoTable({
                         startY: finalY,
-                        head: [['IP ID', 'Location', 'Info', 'Status', 'Reported By']],
+                        head: [['IP ID', 'Location', 'Info', 'Status', 'Time']],
                         body: ipStatusForPDF,
                         theme: 'grid',
                         headStyles: {
@@ -2340,12 +2397,10 @@
                             
                             // Add items for this category
                             const pearForPDF = items.map(item => {
-                                const reportedBy = item.name || item.reportBy || 'N/A';
                                 const description = item.description || 'No description available';
                                 const status = item.status || 'Unknown';
                                 
                                 return [
-                                    reportedBy,
                                     description,
                                     capitalizeFirstLetter(status)
                                 ];
@@ -2353,7 +2408,7 @@
                             
                             doc.autoTable({
                                 startY: finalY,
-                                head: [['Reported By', 'Description', 'Status']],
+                                head: [['Description', 'Status']],
                                 body: pearForPDF,
                                 theme: 'grid',
                                 headStyles: {
@@ -2399,7 +2454,7 @@
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
             checkPublicAccess();
-            loadIncidentData(1);
+            loadIncidentData();
         });
     </script>
 </body>
