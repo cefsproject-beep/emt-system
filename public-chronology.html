@@ -8,6 +8,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <style>
+        /* ------------------------------------------------------------- */
+        /*  your existing styles – kept exactly as they were            */
+        /* ------------------------------------------------------------- */
         :root {
             --primary: #4a6fa5;
             --secondary: #6c9bcf;
@@ -19,6 +22,7 @@
             --light-gray: #e9ecef;
             --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             --hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            --ongoing: #f39c12;
         }
 
         * {
@@ -207,6 +211,23 @@
             color: white;
             text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .incident-header-badge {
+            font-size: 1.4rem;
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            font-weight: 500;
+            white-space: nowrap;
+            text-shadow: none;
         }
 
         .date-display-main {
@@ -319,6 +340,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .record-count {
@@ -370,7 +392,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            min-width: 180px;
+            min-width: 220px;
         }
 
         .sort-select:focus {
@@ -410,13 +432,12 @@
             }
         }
 
-        /* TABLE STYLING - FORMAT YANG BETUL */
         .data-table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
             background: white;
-            min-width: 800px;
+            min-width: 900px; /* slightly wider for new columns */
         }
 
         .data-table thead {
@@ -445,7 +466,6 @@
             background: linear-gradient(135deg, var(--secondary), var(--accent));
         }
 
-        /* CELL STYLING - FORMAT FORMAL */
         .data-table td {
             padding: 12px 15px;
             border-bottom: 1px solid rgba(74, 111, 165, 0.1);
@@ -455,13 +475,11 @@
             line-height: 1.4;
         }
 
-        /* HIGHLIGHT ROW - TETAP DALAM TABLE */
         .data-table tbody tr.highlighted {
             background: rgba(255, 243, 205, 0.7) !important;
             border-left: 4px solid #f39c12;
         }
 
-        /* TABLE ROW STYLING */
         .data-table tbody tr {
             transition: all 0.3s ease;
         }
@@ -478,9 +496,8 @@
             border-bottom: none;
         }
 
-        /* TIMESTAMP CELL - FORMAT BETUL */
         .timestamp-cell {
-            min-width: 180px;
+            min-width: 170px;
             vertical-align: top;
         }
 
@@ -515,16 +532,6 @@
             display: inline-block;
         }
 
-        /* NAME CELL - FORMAT BETUL */
-        .name-cell {
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 0.93rem;
-            vertical-align: top;
-            padding-top: 12px;
-        }
-
-        /* INFO CELL - FORMAT BETUL */
         .info-cell {
             color: var(--dark);
             line-height: 1.4;
@@ -533,16 +540,60 @@
             padding-top: 12px;
         }
 
-        /* LOCATION CELL - FORMAT BETUL */
-        .location-cell {
-            color: var(--primary);
-            font-weight: 500;
-            font-size: 0.92rem;
+        .pear-cell {
             vertical-align: top;
             padding-top: 12px;
         }
 
-        /* NO DATA STYLING */
+        .pear-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 5px;
+            margin-bottom: 3px;
+            color: white;
+            text-transform: uppercase;
+        }
+
+        .badge-people { background: #e67e22; }
+        .badge-environment { background: #27ae60; }
+        .badge-asset { background: #3498db; }
+        .badge-reputation { background: #9b59b6; }
+
+        .status-circle {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 4px;
+            background-color: var(--ongoing);
+            box-shadow: 0 0 8px var(--ongoing);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .pic-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(74, 111, 165, 0.3);
+        }
+
         .no-data {
             text-align: center;
             padding: 60px 20px;
@@ -564,30 +615,6 @@
 
         .no-data.error i {
             color: #e74c3c;
-        }
-
-        /* BUTTON STYLING */
-        .back-btn {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
-            margin-top: 15px;
-        }
-
-        .back-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(52, 152, 219, 0.4);
         }
 
         .refresh-btn {
@@ -619,7 +646,6 @@
             transform: none;
         }
 
-        /* SCROLLBAR */
         .table-scroll-wrapper::-webkit-scrollbar {
             width: 10px;
             height: 10px;
@@ -639,7 +665,6 @@
             background: linear-gradient(135deg, var(--secondary), var(--accent));
         }
 
-        /* RESPONSIVE */
         @media (max-width: 1024px) {
             .table-controls {
                 flex-wrap: wrap;
@@ -714,7 +739,7 @@
             }
             
             .data-table {
-                min-width: 600px;
+                min-width: 700px;
             }
         }
     </style>
@@ -748,7 +773,8 @@
     <div class="main-content">
         <div class="page-header">
             <div>
-                <h1 class="page-title">Chronology Records</h1>
+                <!-- page-title dynamically updated -->
+                <h1 class="page-title" id="mainPageTitle">Chronology Records</h1>
                 <div class="date-filter-controls">
                     <button id="allDataBtn" class="date-filter-btn all-data-btn" onclick="showAllData()">
                         <i class="fas fa-globe"></i> All Data
@@ -778,12 +804,10 @@
                     <select class="sort-select" id="sortSelect">
                         <option value="timestamp_desc">Newest First</option>
                         <option value="timestamp_asc">Oldest First</option>
-                        <option value="name_asc">By Name (A-Z)</option>
-                        <option value="name_desc">By Name (Z-A)</option>
-                        <option value="location_asc">By Location (A-Z)</option>
-                        <option value="location_desc">By Location (Z-A)</option>
-                        <option value="date_asc">By Date (Old-New)</option>
-                        <option value="date_desc">By Date (New-Old)</option>
+                        <option value="incident_asc">By Incident (oldest first)</option>
+                        <option value="incident_desc">By Incident (newest first)</option>
+                        <option value="pic_asc">By PIC (A-Z)</option>
+                        <option value="pic_desc">By PIC (Z-A)</option>
                     </select>
                     <span class="record-count" id="chronologyRecordCount">0 records</span>
                     <button class="refresh-btn" onclick="refreshChronology()" title="Refresh Data">
@@ -797,10 +821,10 @@
                     <table class="data-table chronology-table">
                         <thead>
                             <tr>
-                                <th width="20%">Timestamp</th>
-                                <th width="15%">Reported By</th>
-                                <th width="45%">Information</th>
-                                <th width="20%">Location</th>
+                                <th width="18%">Timestamp</th>
+                                <th width="40%">Information</th>
+                                <th width="22%">PEAR Categories</th>
+                                <th width="20%">PIC</th>
                             </tr>
                         </thead>
                         <tbody id="chronologyTableBody">
@@ -839,6 +863,9 @@
         let selectedIncidentId = null;
         let isShowingSpecificDate = false;
         let viewMode = 'all'; // 'all', 'today', or 'specific'
+
+        // incident id -> name map
+        let incidentsMap = {};
 
         // Format date to YYYY-MM-DD
         function formatDateToYMD(date) {
@@ -926,13 +953,14 @@
             return isShowingSpecificDate;
         }
 
-        // Update UI based on date mode
+        // Update UI based on date mode – now with clean header for selected incident
         function updateDateDisplay() {
             const allDataBtn = document.getElementById('allDataBtn');
             const todayBtn = document.getElementById('todayBtn');
             const specificDateBtn = document.getElementById('specificDateBtn');
             const specificDateDisplay = document.getElementById('specificDateDisplay');
             const currentDateDisplay = document.getElementById('currentDateDisplay');
+            const pageTitleEl = document.getElementById('mainPageTitle');
             
             // Reset all buttons
             allDataBtn.classList.remove('active');
@@ -944,6 +972,7 @@
                 todayBtn.style.display = 'flex';
                 specificDateBtn.style.display = 'none';
                 currentDateDisplay.textContent = 'All Chronology Records';
+                pageTitleEl.innerHTML = 'Chronology Records';
                 
             } else if (viewMode === 'today') {
                 const today = new Date();
@@ -953,6 +982,7 @@
                 todayBtn.style.display = 'flex';
                 specificDateBtn.style.display = 'none';
                 currentDateDisplay.textContent = `Today: ${displayDate}`;
+                pageTitleEl.innerHTML = 'Chronology Records · Today';
                 
             } else if (viewMode === 'specific' && selectedDate) {
                 const dateObj = new Date(selectedDate);
@@ -962,17 +992,19 @@
                 specificDateBtn.classList.add('active');
                 specificDateDisplay.textContent = displayDate;
                 
+                // Show incident name in header if a specific incident is selected – clean format
                 if (selectedIncidentId) {
-                    currentDateDisplay.textContent = `${displayDate} (Selected Incident)`;
-                    currentDateDisplay.innerHTML += ' <i class="fas fa-filter" style="color: #f39c12;"></i>';
-                } else {
+                    const incidentName = incidentsMap[selectedIncidentId] || 'Selected Incident';
+                    pageTitleEl.innerHTML = `Chronology Records – ${incidentName}`;
                     currentDateDisplay.textContent = displayDate;
-                    currentDateDisplay.innerHTML += ' <i class="fas fa-filter" style="color: #3498db;"></i>';
+                } else {
+                    pageTitleEl.innerHTML = 'Chronology Records';
+                    currentDateDisplay.textContent = displayDate;
                 }
             }
         }
 
-        // Load all chronology data from all incidents
+        // Load all chronology data from all incidents + build incidentsMap
         async function loadAllChronologyData() {
             try {
                 console.log('Loading all chronology data...');
@@ -984,6 +1016,7 @@
                     const incident = doc.data();
                     incident.id = doc.id;
                     incidents.push(incident);
+                    incidentsMap[doc.id] = incident.name || 'Unnamed Incident';
                 });
                 
                 const allChronologyPromises = incidents.map(async (incident) => {
@@ -1022,7 +1055,7 @@
                     allChronologyData.push(...chronologyList);
                 });
                 
-                // Sort by newest first by default
+                // default sort: newest first
                 allChronologyData.sort((a, b) => (b.timestampValue || 0) - (a.timestampValue || 0));
                 
                 filterDataByViewMode();
@@ -1041,57 +1074,79 @@
         // Filter data based on view mode
         function filterDataByViewMode() {
             if (viewMode === 'all') {
-                // Show ALL data (all dates, all incidents)
                 filteredData = [...allChronologyData];
+                applySorting('timestamp_desc');
+                document.getElementById('sortSelect').value = 'timestamp_desc';
                 
             } else if (viewMode === 'today') {
-                // Show only today's data
                 const todayYMD = formatDateToYMD(new Date());
-                filteredData = allChronologyData.filter(data => 
-                    data.dateYMD === todayYMD
-                );
+                filteredData = allChronologyData.filter(data => data.dateYMD === todayYMD);
+                // TODAY: default sort by incident (oldest incident first) so that same incident stays together
+                applySorting('incident_asc');
+                document.getElementById('sortSelect').value = 'incident_asc';
                 
             } else if (viewMode === 'specific' && selectedDate) {
-                // Show data for specific date
-                let dateFilteredData = allChronologyData.filter(data => {
-                    return data.dateYMD === selectedDate;
-                });
+                let dateFilteredData = allChronologyData.filter(data => data.dateYMD === selectedDate);
                 
-                // If incidentId is specified, filter by incidentId too
                 if (selectedIncidentId) {
-                    filteredData = dateFilteredData.filter(data => 
-                        data.incidentId === selectedIncidentId
-                    );
+                    filteredData = dateFilteredData.filter(data => data.incidentId === selectedIncidentId);
                 } else {
                     filteredData = dateFilteredData;
                 }
+                applySorting('timestamp_desc');
+                document.getElementById('sortSelect').value = 'timestamp_desc';
             }
             
-            applySorting('timestamp_desc');
             updateRecordCount();
             displayChronology();
+            updateDateDisplay();  // <-- ADDED: ensures title shows incident name after data load
         }
 
-        // Apply sorting
+        // Apply sorting – with incident grouping and PIC sorting
         function applySorting(sortType) {
+            if (!filteredData.length) return;
+            
+            // Precompute group timestamps for incident‑based sorts
+            let minMap, maxMap;
+            if (sortType === 'incident_asc' || sortType === 'incident_desc') {
+                minMap = {};
+                maxMap = {};
+                filteredData.forEach(item => {
+                    const id = item.incidentId;
+                    const ts = item.timestampValue || 0;
+                    if (minMap[id] === undefined || ts < minMap[id]) minMap[id] = ts;
+                    if (maxMap[id] === undefined || ts > maxMap[id]) maxMap[id] = ts;
+                });
+            }
+            
             filteredData.sort((a, b) => {
                 switch(sortType) {
                     case 'timestamp_desc': // Newest First
                         return (b.timestampValue || 0) - (a.timestampValue || 0);
                     case 'timestamp_asc': // Oldest First
                         return (a.timestampValue || 0) - (b.timestampValue || 0);
-                    case 'name_asc': // Name A-Z
-                        return (a.name || '').localeCompare(b.name || '');
-                    case 'name_desc': // Name Z-A
-                        return (b.name || '').localeCompare(a.name || '');
-                    case 'location_asc': // Location A-Z
-                        return (a.location || '').localeCompare(b.location || '');
-                    case 'location_desc': // Location Z-A
-                        return (b.location || '').localeCompare(a.location || '');
-                    case 'date_asc': // Date Old-New
-                        return (a.fullDate || 0) - (b.fullDate || 0);
-                    case 'date_desc': // Date New-Old
-                        return (b.fullDate || 0) - (a.fullDate || 0);
+                        
+                    case 'incident_asc':  // oldest incident group first
+                        {
+                            const minA = minMap[a.incidentId] || 0;
+                            const minB = minMap[b.incidentId] || 0;
+                            if (minA !== minB) return minA - minB;
+                            // same incident: newest first
+                            return (b.timestampValue || 0) - (a.timestampValue || 0);
+                        }
+                    case 'incident_desc': // newest incident group first
+                        {
+                            const maxA = maxMap[a.incidentId] || 0;
+                            const maxB = maxMap[b.incidentId] || 0;
+                            if (maxA !== maxB) return maxB - maxA;
+                            // same incident: newest first
+                            return (b.timestampValue || 0) - (a.timestampValue || 0);
+                        }
+                        
+                    case 'pic_asc':
+                        return (a.pic || '').localeCompare(b.pic || '');
+                    case 'pic_desc':
+                        return (b.pic || '').localeCompare(a.pic || '');
                     default:
                         return (b.timestampValue || 0) - (a.timestampValue || 0);
                 }
@@ -1101,29 +1156,55 @@
         // Apply search filter
         function applySearchFilter() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            
-            if (!searchTerm) {
-                return filteredData;
-            }
+            if (!searchTerm) return filteredData;
             
             return filteredData.filter(data => 
-                (data.name && data.name.toLowerCase().includes(searchTerm)) ||
                 (data.info && data.info.toLowerCase().includes(searchTerm)) ||
-                (data.location && data.location.toLowerCase().includes(searchTerm)) ||
-                (data.formattedDate && data.formattedDate.toLowerCase().includes(searchTerm)) ||
-                (data.formattedTime && data.formattedTime.toLowerCase().includes(searchTerm)) ||
+                (data.pic && data.pic.toLowerCase().includes(searchTerm)) ||
                 (data.incidentName && data.incidentName.toLowerCase().includes(searchTerm))
             );
         }
 
-        // Display chronology in table - FORMAT YANG BETUL
+        // Helper to get badge class for category
+        function getCategoryBadge(cat) {
+            const map = {
+                'people': 'badge-people',
+                'environment': 'badge-environment',
+                'asset': 'badge-asset',
+                'reputation': 'badge-reputation'
+            };
+            return map[cat] || '';
+        }
+
+        // Helper to get PIC display value
+        function getPICDisplay(picValue) {
+            const picMap = {
+                'swc': 'SWC',
+                'wc': 'WC',
+                'ff': 'FF',
+                'fc': 'FC',
+                'cc': 'CC',
+                'planning': 'Planning',
+                'logistic': 'Logistic',
+                'operationchief': 'Operation Chief',
+                'pic1': 'PIC 1',
+                'pic2': 'PIC 2',
+                'pic3': 'PIC 3',
+                'pic4': 'PIC 4',
+                'pic5': 'PIC 5',
+                'pic6': 'PIC 6',
+                'pic7': 'PIC 7'
+            };
+            return picMap[picValue] || picValue;
+        }
+
+        // Display chronology in table – matches admin columns (Timestamp, Info, PEAR, PIC)
         function displayChronology() {
             const tbody = document.getElementById('chronologyTableBody');
             const searchResults = applySearchFilter();
             
             if (searchResults.length === 0) {
                 let message = '';
-                
                 if (viewMode === 'all') {
                     message = 'No chronology records found in the system.';
                 } else if (viewMode === 'today') {
@@ -1146,60 +1227,59 @@
                 return;
             }
             
-            // Clear table
             tbody.innerHTML = '';
             
-            // Add each record as a row
+            // If we are in "selected incident" mode, hide per‑row incident tags
+            const hideIncidentDetails = (viewMode === 'specific' && selectedIncidentId);
+            
             searchResults.forEach(data => {
                 const row = document.createElement('tr');
-                
-                // Check if this is the selected incident
                 const isSelectedIncident = selectedIncidentId && data.incidentId === selectedIncidentId;
+                if (isSelectedIncident) row.classList.add('highlighted');
                 
-                // Add highlight class for selected incident
-                if (isSelectedIncident) {
-                    row.classList.add('highlighted');
-                }
-                
-                // TIMESTAMP CELL - TARIKH DAN MASA
+                // Timestamp cell
                 const timestampCell = document.createElement('td');
                 timestampCell.className = 'timestamp-cell';
                 
                 let timestampHTML = `<div class="timestamp-main">${data.formattedDate || 'N/A'}</div>`;
                 timestampHTML += `<div class="timestamp-time">${data.formattedTime || 'N/A'}</div>`;
                 
-                if (data.incidentName) {
+                // Only show incident source if we are NOT in selected‑incident view
+                if (!hideIncidentDetails && data.incidentName) {
                     timestampHTML += `<div class="incident-source">From: ${data.incidentName}</div>`;
-                    
-                    if (isSelectedIncident) {
-                        timestampHTML += `<div class="selected-tag">Selected Incident</div>`;
-                    }
                 }
                 
                 timestampCell.innerHTML = timestampHTML;
                 
-                // REPORTED BY CELL - NAMA
-                const nameCell = document.createElement('td');
-                nameCell.className = 'name-cell';
-                nameCell.textContent = data.name || 'Unknown';
-                
-                // INFORMATION CELL - MAKLUMAT
+                // Information cell
                 const infoCell = document.createElement('td');
                 infoCell.className = 'info-cell';
                 infoCell.textContent = data.info || data.infoIncident || 'No information provided';
                 
-                // LOCATION CELL - LOKASI
-                const locationCell = document.createElement('td');
-                locationCell.className = 'location-cell';
-                locationCell.textContent = data.location || 'Not specified';
+                // PEAR categories cell
+                const pearCell = document.createElement('td');
+                pearCell.className = 'pear-cell';
+                const categories = data.pearCategories || [];
+                let badgesHtml = '';
+                categories.forEach(cat => {
+                    const badgeClass = getCategoryBadge(cat);
+                    const catDisplay = cat.charAt(0).toUpperCase() + cat.slice(1);
+                    badgesHtml += `<span class="pear-badge ${badgeClass}"><span class="status-circle"></span>${catDisplay}</span> `;
+                });
+                pearCell.innerHTML = badgesHtml || '<span style="color:#999;">—</span>';
                 
-                // Append cells to row
+                // PIC cell
+                const picCell = document.createElement('td');
+                picCell.className = 'info-cell';
+                const picValue = data.pic || '';
+                const picDisplay = getPICDisplay(picValue);
+                picCell.innerHTML = picDisplay ? `<span class="pic-badge">${picDisplay}</span>` : '—';
+                
                 row.appendChild(timestampCell);
-                row.appendChild(nameCell);
                 row.appendChild(infoCell);
-                row.appendChild(locationCell);
+                row.appendChild(pearCell);
+                row.appendChild(picCell);
                 
-                // Append row to table
                 tbody.appendChild(row);
             });
         }
@@ -1209,10 +1289,7 @@
             if (selectedIncidentId && viewMode === 'specific') {
                 const highlightedRow = document.querySelector('tr.highlighted');
                 if (highlightedRow) {
-                    highlightedRow.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'center' 
-                    });
+                    highlightedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }
         }
@@ -1223,30 +1300,22 @@
             const searchResults = searchTerm ? applySearchFilter() : filteredData;
             
             let countText = '';
-            
             if (viewMode === 'all') {
                 countText = `${searchResults.length} of ${allChronologyData.length} total records`;
-                
             } else if (viewMode === 'today') {
                 const todayYMD = formatDateToYMD(new Date());
                 const todayRecords = allChronologyData.filter(d => d.dateYMD === todayYMD).length;
-                
                 countText = `${searchResults.length} of ${todayRecords} today's records`;
-                
             } else if (viewMode === 'specific') {
                 const dateObj = new Date(selectedDate);
                 const displayDate = formatDateDisplay(dateObj);
-                
-                // Get total records for the date
                 const dateRecords = allChronologyData.filter(d => d.dateYMD === selectedDate).length;
                 
                 if (selectedIncidentId) {
-                    // Get records for selected incident on that date
                     const incidentRecords = allChronologyData.filter(d => 
                         d.dateYMD === selectedDate && d.incidentId === selectedIncidentId
                     ).length;
-                    
-                    countText = `${searchResults.length} of ${incidentRecords} records from selected incident for ${displayDate}`;
+                    countText = `${searchResults.length} of ${incidentRecords} records for ${displayDate}`;
                 } else {
                     countText = `${searchResults.length} of ${dateRecords} records for ${displayDate}`;
                 }
