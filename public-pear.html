@@ -234,6 +234,10 @@
             color: white;
             text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
         .date-display-main {
@@ -486,7 +490,7 @@
             border-collapse: separate;
             border-spacing: 0;
             background: white;
-            min-width: 650px;
+            min-width: 550px; /* reduced because we removed one column */
         }
 
         .data-table thead {
@@ -562,16 +566,7 @@
             font-style: italic;
         }
 
-        .selected-tag {
-            font-size: 0.7rem;
-            color: #f39c12;
-            font-weight: bold;
-            margin-top: 2px;
-            background: rgba(243, 156, 18, 0.1);
-            padding: 2px 5px;
-            border-radius: 3px;
-            display: inline-block;
-        }
+        /* REMOVED .selected-tag */
 
         .name-cell {
             font-weight: 600;
@@ -732,7 +727,7 @@
             }
             
             .data-table {
-                min-width: 550px;
+                min-width: 450px;
             }
         }
 
@@ -791,7 +786,7 @@
             }
             
             .data-table {
-                min-width: 450px;
+                min-width: 350px;
             }
             
             .no-data-message {
@@ -837,7 +832,8 @@
     <div class="main-content">
         <div class="page-header">
             <div>
-                <h1 class="page-title">PEAR Records</h1>
+                <!-- Added id to page title so it can be updated dynamically -->
+                <h1 class="page-title" id="mainPageTitle">PEAR Records</h1>
                 <div class="date-filter-controls">
                     <button id="allDataBtn" class="date-filter-btn all-data-btn" onclick="showAllData()">
                         <i class="fas fa-globe"></i> All Data
@@ -871,6 +867,8 @@
                             <select class="sort-select" id="sortPeople">
                                 <option value="timestamp_desc">Newest First</option>
                                 <option value="timestamp_asc">Oldest First</option>
+                                <option value="incident_asc">By Incident (A-Z)</option>
+                                <option value="incident_desc">By Incident (Z-A)</option>
                                 <option value="name_asc">By Name (A-Z)</option>
                                 <option value="name_desc">By Name (Z-A)</option>
                                 <option value="status_asc">By Status (A-Z)</option>
@@ -890,15 +888,14 @@
                             <table class="data-table pear-table">
                                 <thead>
                                     <tr>
-                                        <th width="20%">Timestamp</th>
-                                        <th width="20%">Reported By</th>
-                                        <th width="40%">Description</th>
+                                        <th width="25%">Timestamp</th>
+                                        <th width="55%">Description</th>
                                         <th width="20%">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="peopleTableBody">
                                     <tr>
-                                        <td colspan="4" class="no-data-message">
+                                        <td colspan="3" class="no-data-message">
                                             <i class="fas fa-spinner fa-spin"></i>
                                             <h4>Loading PEAR data...</h4>
                                             <p>Please wait while we load the data.</p>
@@ -924,6 +921,8 @@
                             <select class="sort-select" id="sortEnvironment">
                                 <option value="timestamp_desc">Newest First</option>
                                 <option value="timestamp_asc">Oldest First</option>
+                                <option value="incident_asc">By Incident (A-Z)</option>
+                                <option value="incident_desc">By Incident (Z-A)</option>
                                 <option value="name_asc">By Name (A-Z)</option>
                                 <option value="name_desc">By Name (Z-A)</option>
                                 <option value="status_asc">By Status (A-Z)</option>
@@ -943,15 +942,14 @@
                             <table class="data-table pear-table">
                                 <thead>
                                     <tr>
-                                        <th width="20%">Timestamp</th>
-                                        <th width="20%">Reported By</th>
-                                        <th width="40%">Description</th>
+                                        <th width="25%">Timestamp</th>
+                                        <th width="55%">Description</th>
                                         <th width="20%">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="environmentTableBody">
                                     <tr>
-                                        <td colspan="4" class="no-data-message">
+                                        <td colspan="3" class="no-data-message">
                                             <i class="fas fa-spinner fa-spin"></i>
                                             <h4>Loading PEAR data...</h4>
                                             <p>Please wait while we load the data.</p>
@@ -977,6 +975,8 @@
                             <select class="sort-select" id="sortAsset">
                                 <option value="timestamp_desc">Newest First</option>
                                 <option value="timestamp_asc">Oldest First</option>
+                                <option value="incident_asc">By Incident (A-Z)</option>
+                                <option value="incident_desc">By Incident (Z-A)</option>
                                 <option value="name_asc">By Name (A-Z)</option>
                                 <option value="name_desc">By Name (Z-A)</option>
                                 <option value="status_asc">By Status (A-Z)</option>
@@ -996,15 +996,14 @@
                             <table class="data-table pear-table">
                                 <thead>
                                     <tr>
-                                        <th width="20%">Timestamp</th>
-                                        <th width="20%">Reported By</th>
-                                        <th width="40%">Description</th>
+                                        <th width="25%">Timestamp</th>
+                                        <th width="55%">Description</th>
                                         <th width="20%">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="assetTableBody">
                                     <tr>
-                                        <td colspan="4" class="no-data-message">
+                                        <td colspan="3" class="no-data-message">
                                             <i class="fas fa-spinner fa-spin"></i>
                                             <h4>Loading PEAR data...</h4>
                                             <p>Please wait while we load the data.</p>
@@ -1030,6 +1029,8 @@
                             <select class="sort-select" id="sortReputation">
                                 <option value="timestamp_desc">Newest First</option>
                                 <option value="timestamp_asc">Oldest First</option>
+                                <option value="incident_asc">By Incident (A-Z)</option>
+                                <option value="incident_desc">By Incident (Z-A)</option>
                                 <option value="name_asc">By Name (A-Z)</option>
                                 <option value="name_desc">By Name (Z-A)</option>
                                 <option value="status_asc">By Status (A-Z)</option>
@@ -1049,15 +1050,14 @@
                             <table class="data-table pear-table">
                                 <thead>
                                     <tr>
-                                        <th width="20%">Timestamp</th>
-                                        <th width="20%">Reported By</th>
-                                        <th width="40%">Description</th>
+                                        <th width="25%">Timestamp</th>
+                                        <th width="55%">Description</th>
                                         <th width="20%">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="reputationTableBody">
                                     <tr>
-                                        <td colspan="4" class="no-data-message">
+                                        <td colspan="3" class="no-data-message">
                                             <i class="fas fa-spinner fa-spin"></i>
                                             <h4>Loading PEAR data...</h4>
                                             <p>Please wait while we load the data.</p>
@@ -1100,6 +1100,9 @@
         let selectedIncidentId = null;
         let isShowingSpecificDate = false;
         let viewMode = 'all'; // 'all', 'today', or 'specific'
+
+        // NEW: incident id -> name map for displaying incident name in header
+        let incidentsMap = {};
 
         // Format date to YYYY-MM-DD
         function formatDateToYMD(date) {
@@ -1208,13 +1211,14 @@
             return isShowingSpecificDate;
         }
 
-        // Update UI based on view mode
+        // Update UI based on view mode – now updates the main page title as well
         function updateDateDisplay() {
             const allDataBtn = document.getElementById('allDataBtn');
             const todayBtn = document.getElementById('todayBtn');
             const specificDateBtn = document.getElementById('specificDateBtn');
             const specificDateDisplay = document.getElementById('specificDateDisplay');
             const currentDateDisplay = document.getElementById('currentDateDisplay');
+            const pageTitleEl = document.getElementById('mainPageTitle');
             
             // Reset all buttons
             allDataBtn.classList.remove('active');
@@ -1226,6 +1230,7 @@
                 todayBtn.style.display = 'flex';
                 specificDateBtn.style.display = 'none';
                 currentDateDisplay.textContent = 'All PEAR Records';
+                pageTitleEl.innerHTML = 'PEAR Records';
                 
             } else if (viewMode === 'today') {
                 const today = new Date();
@@ -1235,6 +1240,7 @@
                 todayBtn.style.display = 'flex';
                 specificDateBtn.style.display = 'none';
                 currentDateDisplay.textContent = `Today: ${displayDate}`;
+                pageTitleEl.innerHTML = 'PEAR Records · Today';
                 
             } else if (viewMode === 'specific' && selectedDate) {
                 const dateObj = new Date(selectedDate);
@@ -1244,12 +1250,14 @@
                 specificDateBtn.classList.add('active');
                 specificDateDisplay.textContent = displayDate;
                 
+                // Show incident name in header if a specific incident is selected
                 if (selectedIncidentId) {
-                    currentDateDisplay.textContent = `${displayDate} (Selected Incident)`;
-                    currentDateDisplay.innerHTML += ' <i class="fas fa-filter" style="color: #f39c12;"></i>';
+                    const incidentName = incidentsMap[selectedIncidentId] || 'Selected Incident';
+                    pageTitleEl.innerHTML = `PEAR Records – ${incidentName}`;
+                    currentDateDisplay.innerHTML = `${displayDate} (Selected Incident) <i class="fas fa-filter" style="color: #f39c12;"></i>`;
                 } else {
-                    currentDateDisplay.textContent = displayDate;
-                    currentDateDisplay.innerHTML += ' <i class="fas fa-filter" style="color: #3498db;"></i>';
+                    pageTitleEl.innerHTML = 'PEAR Records';
+                    currentDateDisplay.innerHTML = `${displayDate} <i class="fas fa-filter" style="color: #3498db;"></i>`;
                 }
             }
         }
@@ -1266,6 +1274,8 @@
                     const incident = doc.data();
                     incident.id = doc.id;
                     incidents.push(incident);
+                    // NEW: populate incidents map
+                    incidentsMap[doc.id] = incident.name || 'Unnamed Incident';
                 });
                 
                 console.log(`Found ${incidents.length} incidents`);
@@ -1414,26 +1424,49 @@
             categories.forEach(category => {
                 displayPEARForCategory(category);
             });
+
+            // NEW: update page title after data load (in case incident name is now known)
+            updateDateDisplay();
         }
 
-        // Apply sorting for specific category
+        // Apply sorting for specific category – added incident name sorting
         function applySorting(category, sortType) {
             if (!filteredDataByCategory[category]) return;
             
             filteredDataByCategory[category].sort((a, b) => {
+                // Pre-calc incident names for sorting
+                const aIncident = a.incidentName || '';
+                const bIncident = b.incidentName || '';
+                
                 switch(sortType) {
                     case 'timestamp_desc': // Newest First
                         return (b.timestampValue || 0) - (a.timestampValue || 0);
                     case 'timestamp_asc': // Oldest First
                         return (a.timestampValue || 0) - (b.timestampValue || 0);
-                    case 'name_asc': // Name A-Z
-                        return (a.name || '').localeCompare(b.name || '');
+                    case 'incident_asc': // By Incident Name A-Z
+                        if (aIncident !== bIncident) return aIncident.localeCompare(bIncident);
+                        // If same incident, sort by newest first
+                        return (b.timestampValue || 0) - (a.timestampValue || 0);
+                    case 'incident_desc': // By Incident Name Z-A
+                        if (aIncident !== bIncident) return bIncident.localeCompare(aIncident);
+                        return (b.timestampValue || 0) - (a.timestampValue || 0);
+                    case 'name_asc': // Name A-Z (fallback to incident name? but we don't have name column now)
+                        // For backward compatibility, sort by incident name then timestamp
+                        if (aIncident !== bIncident) return aIncident.localeCompare(bIncident);
+                        return (b.timestampValue || 0) - (a.timestampValue || 0);
                     case 'name_desc': // Name Z-A
-                        return (b.name || '').localeCompare(a.name || '');
+                        if (aIncident !== bIncident) return bIncident.localeCompare(aIncident);
+                        return (b.timestampValue || 0) - (a.timestampValue || 0);
                     case 'status_asc': // Status A-Z
-                        return (a.status || '').localeCompare(b.status || '');
+                        const aStatus = a.status || '';
+                        const bStatus = b.status || '';
+                        if (aStatus !== bStatus) return aStatus.localeCompare(bStatus);
+                        return (b.timestampValue || 0) - (a.timestampValue || 0);
                     case 'status_desc': // Status Z-A
-                        return (b.status || '').localeCompare(a.status || '');
+                        const aSt = a.status || '';
+                        const bSt = b.status || '';
+                        if (aSt !== bSt) return bSt.localeCompare(aSt);
+                        return (b.timestampValue || 0) - (a.timestampValue || 0);
                     case 'date_asc': // Date Old-New
                         return (a.fullDate || 0) - (b.fullDate || 0);
                     case 'date_desc': // Date New-Old
@@ -1468,7 +1501,7 @@
             return string ? string.charAt(0).toUpperCase() + string.slice(1) : '';
         }
 
-        // Display PEAR data for specific category
+        // Display PEAR data for specific category – removed Reported By column
         function displayPEARForCategory(category) {
             const tbody = document.getElementById(`${category}TableBody`);
             const searchResults = applySearchFilter(category);
@@ -1496,7 +1529,7 @@
                     
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="4" class="no-data-message">
+                        <td colspan="3" class="no-data-message">
                             <i class="fas fa-inbox"></i>
                             <h4>${message}</h4>
                             <p>${subMessage}</p>
@@ -1515,36 +1548,28 @@
             // Clear table
             tbody.innerHTML = '';
             
-            // Add each record as a row
+            // Add each record as a row – now only 3 columns
             filteredDataByCategory[category].forEach((data, index) => {
                 const row = document.createElement('tr');
                 
-                // CRITICAL FIX: Highlight jika incident yang dipilih
+                // Highlight jika incident yang dipilih
                 if (selectedIncidentId && data.incidentId === selectedIncidentId) {
                     row.classList.add('highlighted');
                 }
                 
-                // TIMESTAMP CELL
+                // TIMESTAMP CELL (still shows incident name in italic if not filtering by incident)
                 const timestampCell = document.createElement('td');
                 timestampCell.className = 'timestamp-cell';
                 
                 let timestampHTML = `<div class="timestamp-main">${data.formattedDate || 'N/A'}</div>`;
                 timestampHTML += `<div class="timestamp-time">${data.formattedTime || 'N/A'}</div>`;
                 
-                if (data.incidentName) {
+                // Only show incident source if we are NOT in selected-incident view
+                if (!(viewMode === 'specific' && selectedIncidentId) && data.incidentName) {
                     timestampHTML += `<div class="incident-source">From: ${data.incidentName}</div>`;
-                    
-                    if (selectedIncidentId && data.incidentId === selectedIncidentId) {
-                        timestampHTML += `<div class="selected-tag">Selected Incident</div>`;
-                    }
                 }
                 
                 timestampCell.innerHTML = timestampHTML;
-                
-                // REPORTED BY CELL
-                const nameCell = document.createElement('td');
-                nameCell.className = 'name-cell';
-                nameCell.textContent = data.name || 'Unknown';
                 
                 // DESCRIPTION CELL
                 const descriptionCell = document.createElement('td');
@@ -1559,7 +1584,6 @@
                 
                 // Append cells to row
                 row.appendChild(timestampCell);
-                row.appendChild(nameCell);
                 row.appendChild(descriptionCell);
                 row.appendChild(statusCell);
                 
@@ -1688,7 +1712,7 @@
                 if (tbody) {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="4" class="no-data-message">
+                            <td colspan="3" class="no-data-message">
                                 <i class="fas fa-exclamation-triangle"></i>
                                 <h4>Error loading data</h4>
                                 <p>Please check your connection and try again.</p>
